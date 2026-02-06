@@ -1,0 +1,357 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Subscribe from '../components/Subscribe.astro';
+import Center from '../layouts/primitives/Center.astro';
+import Stack from '../layouts/primitives/Stack.astro';
+import Grid from '../layouts/primitives/Grid.astro';
+import Cluster from '../layouts/primitives/Cluster.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const schools = [
+	{
+		name: 'Pattern & Play',
+		emoji: '📊',
+		description: 'Mathematics, probability, systems thinking, and creative reasoning. This school explores how patterns reveal structure in chaos, how chance shapes outcomes, and how playful experimentation leads to deeper understanding of complexity.',
+	},
+	{
+		name: 'Story & Expression',
+		emoji: '🎭',
+		description: 'Mythology, rhetoric, writing, and visual communication. This school explores how stories structure our understanding, how language persuades, and how expression—whether through words or design—shapes culture and consciousness.',
+	},
+	{
+		name: 'Society & Self',
+		emoji: '🌱',
+		description: 'Psychology, philosophy, ethics, and human flourishing. This school examines how we learn, why we behave as we do, what gives life meaning, and how freedom and responsibility shape both individuals and communities.',
+	},
+	{
+		name: 'Making',
+		emoji: '🛠️',
+		description: 'Craft, design, building, and publishing. This school emphasizes learning through creation—whether coding a website, writing for an audience, tracking personal systems, or developing any skill through deliberate practice and feedback.',
+	},
+];
+
+const sections = [
+	{
+		name: 'Blog',
+		status: 'Live',
+		description: 'Regular posts on learning, education, and cross-disciplinary thinking.',
+		href: '/blog',
+	},
+	{
+		name: 'Essays',
+		status: 'Coming soon',
+		description: 'Long-form foundational pieces exploring deeper ideas.',
+		href: '/essays',
+	},
+	{
+		name: 'Library',
+		status: 'In progress',
+		description: 'Growing collection of Atoms—bite-sized concepts you can build on.',
+		href: '/library',
+	},
+	{
+		name: 'Courses',
+		status: 'First one launching soon',
+		description: 'Structured Scrolls for deep, sequential learning.',
+		href: '/courses',
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+
+		<main>
+			<!-- Hero Section -->
+			<section class="hero region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-s)" class="hero-text">
+							<h1>The Self-Taught Scholar</h1>
+							<p class="tagline">Cross-disciplinary liberal arts education, accessible and affordable.</p>
+						</Stack>
+						<p class="intro">
+							We're building something different: an educational platform that treats learning as a lifelong craft,
+							not a credential to collect. Our focus is on transferable skills across four schools of knowledge—because
+							the most valuable thinkers are the ones who can connect ideas across domains.
+						</p>
+						<Cluster space="var(--space-s)" justify="center">
+							<a href="/blog" class="button button-primary">Start Reading</a>
+							<a href="#subscribe" class="button button-secondary">Get Updates</a>
+						</Cluster>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- Four Schools -->
+			<section class="schools region">
+				<Center max="var(--measure-wide)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-xs)" class="section-header">
+							<h2>The Four Schools</h2>
+							<p class="text-muted">Every skill worth learning draws from these interconnected domains.</p>
+						</Stack>
+						<Grid min="280px" space="var(--space-m)">
+							{schools.map((school) => (
+								<article class="school-card">
+									<Stack space="var(--space-s)">
+										<span class="school-emoji">{school.emoji}</span>
+										<h3>{school.name}</h3>
+										<p>{school.description}</p>
+									</Stack>
+								</article>
+							))}
+						</Grid>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- What's Available -->
+			<section class="available region">
+				<Center max="var(--measure-wide)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-xs)" class="section-header">
+							<h2>What's Available Now</h2>
+							<p class="text-muted">Currently building in public. Here's what's live:</p>
+						</Stack>
+						<Grid min="280px" space="var(--space-m)">
+							{sections.map((section) => (
+								<a href={section.href} class="section-card card">
+									<Stack space="var(--space-2xs)">
+										<Cluster space="var(--space-xs)" justify="space-between" align="baseline">
+											<h3>{section.name}</h3>
+											<span class:list={['status-badge', section.status === 'Live' && 'status-live']}>
+												{section.status}
+											</span>
+										</Cluster>
+										<p class="text-muted">{section.description}</p>
+									</Stack>
+								</a>
+							))}
+						</Grid>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- The Approach -->
+			<section class="approach region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-l)">
+						<h2 class="section-header">The Approach</h2>
+						<div class="prose flow">
+							<p>
+								Traditional education optimizes for credentials. We optimize for capability. The difference matters.
+							</p>
+							<p>
+								Our content is organized around two core concepts:
+							</p>
+							<ul>
+								<li>
+									<strong>Atoms</strong> are small, foundational concepts—the building blocks of understanding.
+									Each one is designed to be learned in minutes but remembered for years.
+								</li>
+								<li>
+									<strong>Scrolls</strong> are curated learning paths that combine atoms into coherent journeys.
+									They're courses, but structured around mastery rather than completion.
+								</li>
+							</ul>
+							<p>
+								We believe in talent stacks over narrow expertise. A programmer who understands psychology
+								builds better products. A writer who understands systems thinking creates clearer arguments.
+								The edges between disciplines are where the interesting work happens.
+							</p>
+							<p>
+								The goal isn't to know everything—it's to build a foundation of transferable principles
+								that compound over time. Learn how to learn, and the rest follows.
+							</p>
+						</div>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- Join the Journey -->
+			<section id="subscribe" class="join region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-xs)" class="section-header">
+							<h2>Join the Journey</h2>
+							<p class="text-muted">
+								This platform is being built in public. Subscribe to follow along as we add new content,
+								launch courses, and figure out what works.
+							</p>
+						</Stack>
+						<Subscribe
+							title=""
+							blurb="Occasional emails when something worth reading drops. No spam, unsubscribe anytime."
+							showCheckboxes={true}
+							defaultInterests={["blog", "courses"]}
+						/>
+						<p class="join-note text-small text-muted">
+							Not ready to subscribe? <a href="/blog">Browse the blog</a> to see if this is for you.
+						</p>
+					</Stack>
+				</Center>
+			</section>
+		</main>
+
+		<Footer hideSubscribe={true} />
+	</body>
+</html>
+
+<style>
+	/* Hero */
+	.hero {
+		padding-block: var(--space-2xl);
+		background: linear-gradient(to bottom, var(--color-bg-subtle), var(--color-bg));
+	}
+
+	.hero-text {
+		text-align: center;
+	}
+
+	.hero h1 {
+		font-size: var(--step-5);
+	}
+
+	.tagline {
+		font-size: var(--step-1);
+		color: var(--color-text-muted);
+	}
+
+	.intro {
+		font-size: var(--step-0);
+		max-inline-size: 55ch;
+		margin-inline: auto;
+		text-align: center;
+		color: var(--color-text);
+	}
+
+	/* Buttons */
+	.button {
+		display: inline-flex;
+		align-items: center;
+		padding-block: var(--space-xs);
+		padding-inline: var(--space-m);
+		font-size: var(--step--1);
+		font-weight: 500;
+		text-decoration: none;
+		border-radius: var(--space-2xs);
+		transition: all 0.15s ease;
+	}
+
+	.button-primary {
+		background-color: var(--color-dark);
+		color: var(--color-light);
+	}
+
+	.button-primary:hover {
+		background-color: var(--color-text);
+	}
+
+	.button-secondary {
+		background-color: transparent;
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+	}
+
+	.button-secondary:hover {
+		border-color: var(--color-text-muted);
+		background-color: var(--color-bg-subtle);
+	}
+
+	/* Section headers */
+	.section-header {
+		text-align: center;
+	}
+
+	/* Schools */
+	.schools {
+		background-color: var(--color-bg);
+	}
+
+	.school-card {
+		padding: var(--space-m);
+		background-color: var(--color-bg-subtle);
+		border-radius: var(--space-xs);
+	}
+
+	.school-emoji {
+		font-size: var(--step-3);
+	}
+
+	.school-card h3 {
+		font-size: var(--step-1);
+		font-weight: 600;
+	}
+
+	.school-card p {
+		font-size: var(--step--1);
+		color: var(--color-text);
+		line-height: 1.6;
+	}
+
+	/* Available sections */
+	.available {
+		background-color: var(--color-bg-subtle);
+	}
+
+	.section-card {
+		text-decoration: none;
+		color: inherit;
+		background-color: var(--color-bg);
+	}
+
+	.section-card h3 {
+		font-size: var(--step-0);
+		font-weight: 600;
+		transition: color 0.15s ease;
+	}
+
+	.section-card:hover h3 {
+		color: var(--color-accent);
+	}
+
+	.section-card p {
+		font-size: var(--step--1);
+	}
+
+	.status-badge {
+		font-size: var(--step--2);
+		padding-block: var(--space-3xs);
+		padding-inline: var(--space-2xs);
+		background-color: var(--color-bg-subtle);
+		color: var(--color-text-muted);
+		border-radius: var(--space-3xs);
+		white-space: nowrap;
+	}
+
+	.status-badge.status-live {
+		background-color: color-mix(in srgb, #22c55e 15%, transparent);
+		color: #15803d;
+	}
+
+	/* Approach */
+	.approach {
+		background-color: var(--color-bg);
+	}
+
+	/* Join */
+	.join {
+		background-color: var(--color-bg-subtle);
+	}
+
+	.join-note {
+		text-align: center;
+	}
+
+	.join-note a {
+		color: var(--color-accent);
+	}
+</style>

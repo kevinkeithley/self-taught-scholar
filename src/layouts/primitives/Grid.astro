@@ -1,0 +1,30 @@
+---
+/**
+ * Grid - Auto-responsive grid using CSS Grid
+ * Uses auto-fit/minmax for intrinsic responsiveness
+ * @see https://every-layout.dev/layouts/grid/
+ */
+interface Props {
+	min?: string;
+	space?: string;
+	class?: string;
+}
+
+const {
+	min = '250px',
+	space = 'var(--space-l)',
+	class: className,
+} = Astro.props;
+---
+
+<div class:list={['grid', className]} style={`--min: ${min}; --space: ${space}`}>
+	<slot />
+</div>
+
+<style>
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(var(--min), 100%), 1fr));
+		gap: var(--space, 1rem);
+	}
+</style>

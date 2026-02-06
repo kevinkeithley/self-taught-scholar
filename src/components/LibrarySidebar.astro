@@ -1,0 +1,335 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Stack from '../layouts/primitives/Stack.astro';
+import { schools } from '../data/schools';
+
+interface Props {
+	atomsBySchool?: Record<string, CollectionEntry<'library'>[]>;
+	currentSlug?: string;
+	currentSchool?: string;
+	currentDomain?: string;
+}
+
+const { atomsBySchool = {}, currentSlug, currentSchool, currentDomain } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+// Format domain slug to title case
+function formatDomain(domain: string): string {
+	return domain
+		.split('-')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+// Group atoms by domain for each school
+function getAtomsByDomain(schoolSlug: string) {
+	const atoms = atomsBySchool[schoolSlug] || [];
+	return atoms.reduce(
+		(acc, atom) => {
+			const domain = atom.data.domain;
+			if (!acc[domain]) acc[domain] = [];
+			acc[domain].push(atom);
+			return acc;
+		},
+		{} as Record<string, CollectionEntry<'library'>[]>,
+	);
+}
+---
+
+<nav class="library-sidebar">
+	<Stack space="var(--space-l)">
+		<a
+			href="/library"
+			class:list={['sidebar-title', { active: currentPath === '/library/' || currentPath === '/library' }]}
+		>
+			Library
+		</a>
+
+		<Stack space="var(--space-s)">
+			{schools.map((school) => {
+				const isSchoolActive = currentSchool === school.slug;
+				const schoolPath = `/library/${school.slug}/`;
+				const atomsByDomain = getAtomsByDomain(school.slug);
+				const hasContent = school.domains.length > 0;
+
+				return (
+					<div class="school-section" data-school={school.slug} data-expanded={isSchoolActive ? 'true' : 'false'}>
+						<button
+							type="button"
+							class:list={['school-toggle', { active: isSchoolActive, 'has-content': hasContent }]}
+							aria-expanded={isSchoolActive ? 'true' : 'false'}
+							aria-controls={`domains-${school.slug}`}
+							disabled={!hasContent}
+						>
+							<span class="school-info">
+								<span class="school-emoji">{school.emoji}</span>
+								<a
+									href={schoolPath}
+									class="school-name"
+									aria-current={isSchoolActive && !currentDomain ? 'page' : undefined}
+								>
+									{school.name}
+								</a>
+							</span>
+							{hasContent && (
+								<span class="toggle-icon" aria-hidden="true">
+									{isSchoolActive ? '▼' : '▶'}
+								</span>
+							)}
+						</button>
+
+						{hasContent && (
+							<ul
+								id={`domains-${school.slug}`}
+								class="domain-list"
+								role="list"
+								style={isSchoolActive ? '' : 'display: none;'}
+							>
+								{school.domains.map((domain) => {
+									const isDomainActive = currentDomain === domain;
+									const domainPath = `/library/${school.slug}/${domain}/`;
+									const domainAtoms = atomsByDomain[domain] || [];
+
+									return (
+										<li class="domain-item">
+											<a
+												href={domainPath}
+												class:list={['domain-link', { active: isDomainActive }]}
+												aria-current={isDomainActive && !currentSlug ? 'page' : undefined}
+											>
+												{formatDomain(domain)}
+												{domainAtoms.length > 0 && (
+													<span class="atom-count">({domainAtoms.length})</span>
+												)}
+											</a>
+
+											{isDomainActive && domainAtoms.length > 0 && (
+												<ul class="atom-list" role="list">
+													{domainAtoms.map((atom) => (
+														<li>
+															<a
+																href={`/library/${school.slug}/${domain}/${atom.id}/`}
+																class:list={['atom-link', { active: atom.id === currentSlug }]}
+																aria-current={atom.id === currentSlug ? 'page' : undefined}
+															>
+																{atom.data.title}
+															</a>
+														</li>
+													))}
+												</ul>
+											)}
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+				);
+			})}
+		</Stack>
+	</Stack>
+</nav>
+
+<script>
+	function initSidebar() {
+		const schoolSections = document.querySelectorAll('.school-section');
+
+		schoolSections.forEach((section) => {
+			const toggle = section.querySelector('.school-toggle') as HTMLButtonElement;
+			const domainList = section.querySelector('.domain-list') as HTMLUListElement;
+			const toggleIcon = section.querySelector('.toggle-icon');
+
+			if (!toggle || !domainList) return;
+
+			toggle.addEventListener('click', (e) => {
+				// Don't toggle if clicking the school name link
+				if ((e.target as HTMLElement).classList.contains('school-name')) {
+					return;
+				}
+
+				const isExpanded = section.getAttribute('data-expanded') === 'true';
+				const newExpanded = !isExpanded;
+
+				section.setAttribute('data-expanded', String(newExpanded));
+				toggle.setAttribute('aria-expanded', String(newExpanded));
+				domainList.style.display = newExpanded ? '' : 'none';
+
+				if (toggleIcon) {
+					toggleIcon.textContent = newExpanded ? '▼' : '▶';
+				}
+			});
+		});
+	}
+
+	// Initialize on page load
+	initSidebar();
+
+	// Re-initialize after Astro page transitions
+	document.addEventListener('astro:after-swap', initSidebar);
+</script>
+
+<style>
+	.library-sidebar {
+		padding: var(--space-m);
+		block-size: 100%;
+		overflow-y: auto;
+	}
+
+	.sidebar-title {
+		font-size: var(--step-1);
+		font-weight: 700;
+		color: var(--color-dark);
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.sidebar-title:hover {
+		color: var(--color-accent);
+	}
+
+	.sidebar-title.active {
+		color: var(--color-accent);
+	}
+
+	/* School Section */
+	.school-section {
+		border-block-end: 1px solid var(--color-border);
+		padding-block-end: var(--space-s);
+	}
+
+	.school-section:last-child {
+		border-block-end: none;
+		padding-block-end: 0;
+	}
+
+	.school-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		inline-size: 100%;
+		padding: var(--space-2xs) 0;
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: start;
+	}
+
+	.school-toggle:disabled {
+		cursor: default;
+	}
+
+	.school-toggle:not(:disabled):hover .toggle-icon {
+		color: var(--color-text);
+	}
+
+	.school-info {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2xs);
+	}
+
+	.school-emoji {
+		font-size: var(--step-0);
+	}
+
+	.school-name {
+		font-size: var(--step--1);
+		font-weight: 600;
+		color: var(--color-text);
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.school-name:hover {
+		color: var(--color-accent);
+	}
+
+	.school-toggle.active .school-name {
+		color: var(--color-accent);
+	}
+
+	.toggle-icon {
+		font-size: var(--step--2);
+		color: var(--color-text-muted);
+		transition: color 0.15s ease;
+	}
+
+	/* Domain List */
+	.domain-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		padding-inline-start: var(--space-m);
+		margin-block-start: var(--space-2xs);
+	}
+
+	.domain-item {
+		margin: 0;
+	}
+
+	.domain-link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2xs);
+		padding-block: var(--space-3xs);
+		padding-inline: var(--space-2xs);
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+		text-decoration: none;
+		border-radius: var(--space-3xs);
+		transition: background-color 0.15s ease, color 0.15s ease;
+	}
+
+	.domain-link:hover {
+		background-color: var(--color-bg-subtle);
+		color: var(--color-text);
+	}
+
+	.domain-link.active {
+		background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+		color: var(--color-accent);
+		font-weight: 500;
+	}
+
+	.atom-count {
+		font-size: var(--step--2);
+		color: var(--color-text-muted);
+		opacity: 0.7;
+	}
+
+	/* Atom List */
+	.atom-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		padding-inline-start: var(--space-s);
+		margin-block-start: var(--space-3xs);
+		border-inline-start: 1px solid var(--color-border);
+	}
+
+	.atom-list li {
+		margin: 0;
+	}
+
+	.atom-link {
+		display: block;
+		padding-block: var(--space-3xs);
+		padding-inline: var(--space-2xs);
+		font-size: var(--step--2);
+		color: var(--color-text-muted);
+		text-decoration: none;
+		border-radius: var(--space-3xs);
+		transition: background-color 0.15s ease, color 0.15s ease;
+	}
+
+	.atom-link:hover {
+		background-color: var(--color-bg-subtle);
+		color: var(--color-text);
+	}
+
+	.atom-link.active {
+		background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+		color: var(--color-accent);
+		font-weight: 500;
+	}
+</style>

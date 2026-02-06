@@ -1,0 +1,37 @@
+---
+/**
+ * Cluster - Horizontal wrapping groups
+ * Groups items that differ in length and are liable to wrap
+ * @see https://every-layout.dev/layouts/cluster/
+ */
+interface Props {
+	justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+	align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+	space?: string;
+	class?: string;
+}
+
+const {
+	justify = 'flex-start',
+	align = 'center',
+	space = 'var(--space-s)',
+	class: className,
+} = Astro.props;
+---
+
+<div
+	class:list={['cluster', className]}
+	style={`--space: ${space}; --justify: ${justify}; --align: ${align}`}
+>
+	<slot />
+</div>
+
+<style>
+	.cluster {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space, 1rem);
+		justify-content: var(--justify, flex-start);
+		align-items: var(--align, center);
+	}
+</style>

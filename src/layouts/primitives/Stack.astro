@@ -1,0 +1,34 @@
+---
+/**
+ * Stack - Vertical spacing primitive
+ * Injects space between child elements using CSS custom property
+ * @see https://every-layout.dev/layouts/stack/
+ */
+interface Props {
+	space?: string;
+	recursive?: boolean;
+	class?: string;
+}
+
+const { space = 'var(--space-m)', recursive = false, class: className } = Astro.props;
+---
+
+<div class:list={['stack', { recursive }, className]} style={`--space: ${space}`}>
+	<slot />
+</div>
+
+<style>
+	.stack {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+	}
+
+	.stack > :global(* + *) {
+		margin-block-start: var(--space, 1rem);
+	}
+
+	.stack.recursive :global(* + *) {
+		margin-block-start: var(--space, 1rem);
+	}
+</style>

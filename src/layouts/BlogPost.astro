@@ -1,0 +1,86 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
+import Center from "./primitives/Center.astro";
+import Stack from "./primitives/Stack.astro";
+
+type Props = CollectionEntry<"blog">["data"];
+
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+
+	<body>
+		<Header />
+
+		<main class="region">
+			<Center max="var(--measure)">
+				<article>
+					<Stack space="var(--space-l)">
+						{heroImage && (
+							<Image
+								width={1020}
+								height={510}
+								src={heroImage}
+								alt=""
+								class="hero-image"
+							/>
+						)}
+
+						<header class="article-header">
+							<Stack space="var(--space-s)">
+								<p class="article-meta text-small text-muted">
+									<FormattedDate date={pubDate} />
+									{updatedDate && (
+										<span class="updated">
+											(Updated <FormattedDate date={updatedDate} />)
+										</span>
+									)}
+								</p>
+								<h1>{title}</h1>
+							</Stack>
+						</header>
+
+						<div class="prose flow">
+							<slot />
+						</div>
+					</Stack>
+				</article>
+			</Center>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.hero-image {
+		inline-size: 100%;
+		border-radius: var(--space-s);
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+	}
+
+	.article-header {
+		padding-block-end: var(--space-m);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.article-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+	}
+
+	.updated {
+		font-style: italic;
+	}
+</style>

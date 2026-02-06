@@ -1,0 +1,335 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../../components/BaseHead.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import LibrarySidebar from '../../../../components/LibrarySidebar.astro';
+import Sidebar from '../../../../layouts/primitives/Sidebar.astro';
+import Stack from '../../../../layouts/primitives/Stack.astro';
+import Grid from '../../../../layouts/primitives/Grid.astro';
+import Center from '../../../../layouts/primitives/Center.astro';
+import { SITE_TITLE } from '../../../../consts';
+import { schools, schoolsBySlug, type SchoolSlug } from '../../../../data/schools';
+
+// Domain descriptions
+const domainDescriptions: Record<string, string> = {
+	// Pattern & Play
+	'mathematics': 'The language of patterns, structure, and quantitative reasoning. From basic arithmetic to advanced analysis, mathematics reveals the hidden order in chaos and provides tools for modeling reality.',
+	'probability': 'Understanding uncertainty, risk, and chance. How to reason about random events, make better predictions, and navigate a world where outcomes are never guaranteed.',
+	'systems-thinking': 'Seeing wholes instead of parts. How feedback loops, emergence, and interconnection shape everything from ecosystems to economies to personal habits.',
+	'game-theory': 'Strategic decision-making when outcomes depend on others\' choices. The mathematics of cooperation, competition, and finding optimal moves in complex situations.',
+	// Story & Expression
+	'writing': 'Clear thinking through clear expression. The craft of communicating ideas, telling stories, and shaping understanding through the written word.',
+	'rhetoric': 'The art of persuasion. How language moves people, why certain arguments work, and the structure of compelling communication.',
+	'mythology': 'Stories that shape civilizations. Ancient narratives, archetypal patterns, and the symbolic frameworks humans use to make sense of existence.',
+	'visual-communication': 'Design as language. How images, layout, color, and form communicate meaning beyond words.',
+	// Society & Self
+	'psychology': 'Understanding human behavior, cognition, and emotion. How minds work, why we act as we do, and what drives decision-making.',
+	'philosophy': 'The big questions about existence, knowledge, ethics, and meaning. Tools for clear thinking about what matters and why.',
+	'ethics': 'How to live well and treat others justly. Frameworks for navigating moral complexity and making principled decisions.',
+	'behavioral-economics': 'Where psychology meets decision-making. How cognitive biases, heuristics, and irrational patterns shape our choices about money, risk, and value.',
+	// Making
+	'web-development': 'Building for the internet. Code, design, and deployment—the skills to create sites and applications that exist in the world.',
+	'design': 'Form and function united. Visual thinking, user experience, and the practice of making things that work beautifully.',
+	'craft': 'Learning through making. Hands-on skills, deliberate practice, and the feedback loop of creation.',
+	'publishing': 'Getting your work into the world. Writing for readers, building an audience, and the practice of consistent public creation.',
+};
+
+// Format domain slug to title case
+function formatDomain(domain: string): string {
+	return domain
+		.split('-')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+export function getStaticPaths() {
+	// Generate paths for each school/domain combination
+	const paths: { params: { schoolSlug: string; domainSlug: string } }[] = [];
+
+	for (const school of schools) {
+		for (const domain of school.domains) {
+			paths.push({
+				params: { schoolSlug: school.slug, domainSlug: domain },
+			});
+		}
+	}
+
+	return paths;
+}
+
+const { schoolSlug, domainSlug } = Astro.params;
+const school = schoolsBySlug[schoolSlug as SchoolSlug];
+
+if (!school || !school.domains.includes(domainSlug)) {
+	return Astro.redirect(`/library/${schoolSlug}/`);
+}
+
+// Get all atoms and group by school
+const allAtoms = await getCollection('library');
+const atomsBySchool = allAtoms.reduce(
+	(acc, atom) => {
+		const s = atom.data.school;
+		if (!acc[s]) acc[s] = [];
+		acc[s].push(atom);
+		return acc;
+	},
+	{} as Record<string, typeof allAtoms>,
+);
+
+// Sort atoms
+for (const s of Object.keys(atomsBySchool)) {
+	atomsBySchool[s].sort((a, b) => a.data.title.localeCompare(b.data.title));
+}
+
+// Get atoms for this specific domain
+const domainAtoms = allAtoms
+	.filter(atom => atom.data.school === schoolSlug && atom.data.domain === domainSlug)
+	.sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const formattedDomain = formatDomain(domainSlug);
+const domainDescription = domainDescriptions[domainSlug] || '';
+
+const difficultyColors: Record<string, string> = {
+	beginner: 'difficulty-beginner',
+	intermediate: 'difficulty-intermediate',
+	advanced: 'difficulty-advanced',
+};
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`${formattedDomain} | ${school.name} | Library | ${SITE_TITLE}`}
+			description={`Explore ${formattedDomain} atoms in the ${school.name} school.`}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<Center max="75rem" gutters="0">
+				<Sidebar sideWidth="16rem" contentMin="60%" space="0" noStretch>
+					<aside class="sidebar-container">
+						<LibrarySidebar
+							atomsBySchool={atomsBySchool}
+							currentSchool={schoolSlug}
+							currentDomain={domainSlug}
+						/>
+					</aside>
+					<div class="main-content region">
+						<Center max="var(--measure-wide)" gutters="var(--space-m)">
+							<Stack space="var(--space-xl)">
+								<!-- Breadcrumb -->
+								<nav class="breadcrumb text-small">
+									<a href="/library">Library</a>
+									<span class="separator">/</span>
+									<a href={`/library/${schoolSlug}/`}>{school.name}</a>
+									<span class="separator">/</span>
+									<span>{formattedDomain}</span>
+								</nav>
+
+								<!-- Domain Header -->
+								<header class="domain-header">
+									<Stack space="var(--space-s)">
+										<div class="domain-title-row">
+											<span class="school-emoji">{school.emoji}</span>
+											<h1>{formattedDomain}</h1>
+										</div>
+										<p class="domain-context">
+											Part of the <a href={`/library/${schoolSlug}/`}>{school.name}</a> school
+										</p>
+										{domainDescription && (
+											<p class="domain-description">{domainDescription}</p>
+										)}
+									</Stack>
+								</header>
+
+								<!-- Atoms Section -->
+								<section>
+									<Stack space="var(--space-m)">
+										<h2>Atoms</h2>
+
+										{domainAtoms.length > 0 ? (
+											<Grid min="280px" space="var(--space-m)">
+												{domainAtoms.map((atom) => (
+													<a href={`/library/${schoolSlug}/${domainSlug}/${atom.id}/`} class="atom-card card">
+														<Stack space="var(--space-2xs)">
+															<h3 class="atom-title">{atom.data.title}</h3>
+															<p class="atom-description">{atom.data.description}</p>
+															{atom.data.difficulty && (
+																<span class={`difficulty-badge ${difficultyColors[atom.data.difficulty]}`}>
+																	{atom.data.difficulty}
+																</span>
+															)}
+														</Stack>
+													</a>
+												))}
+											</Grid>
+										) : (
+											<div class="empty-state">
+												<Stack space="var(--space-xs)">
+													<p class="text-muted">No atoms in this domain yet.</p>
+													<p class="text-small text-muted">
+														We're actively building the Library. Check back soon or
+														<a href="/#subscribe">subscribe</a> to get notified when new content is added.
+													</p>
+												</Stack>
+											</div>
+										)}
+									</Stack>
+								</section>
+
+								<!-- Back to School -->
+								<nav class="back-link">
+									<a href={`/library/${schoolSlug}/`}>
+										← Back to {school.name}
+									</a>
+								</nav>
+							</Stack>
+						</Center>
+					</div>
+				</Sidebar>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.sidebar-container {
+		border-inline-end: 1px solid var(--color-border);
+		block-size: 100%;
+	}
+
+	@media (max-width: 50rem) {
+		.sidebar-container {
+			display: none;
+		}
+	}
+
+	.breadcrumb {
+		color: var(--color-text-muted);
+	}
+
+	.breadcrumb a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.breadcrumb a:hover {
+		color: var(--color-text);
+	}
+
+	.separator {
+		margin-inline: var(--space-2xs);
+	}
+
+	/* Domain Header */
+	.domain-header {
+		padding-block-end: var(--space-l);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.domain-title-row {
+		display: flex;
+		align-items: center;
+		gap: var(--space-s);
+	}
+
+	.school-emoji {
+		font-size: var(--step-3);
+		line-height: 1;
+	}
+
+	.domain-context {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+	}
+
+	.domain-context a {
+		color: var(--color-accent);
+	}
+
+	.domain-description {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		line-height: 1.6;
+		max-width: var(--measure);
+	}
+
+	/* Atom Cards */
+	.atom-card {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.atom-title {
+		font-size: var(--step-0);
+		font-weight: 600;
+		line-height: 1.3;
+		transition: color 0.15s ease;
+	}
+
+	.atom-card:hover .atom-title {
+		color: var(--color-accent);
+	}
+
+	.atom-description {
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.difficulty-badge {
+		display: inline-block;
+		width: fit-content;
+		padding-inline: var(--space-2xs);
+		padding-block: var(--space-3xs);
+		font-size: var(--step--2);
+		font-weight: 500;
+		border-radius: 9999px;
+	}
+
+	.difficulty-beginner {
+		background-color: color-mix(in srgb, #22c55e 15%, transparent);
+		color: #15803d;
+	}
+
+	.difficulty-intermediate {
+		background-color: color-mix(in srgb, #eab308 15%, transparent);
+		color: #a16207;
+	}
+
+	.difficulty-advanced {
+		background-color: color-mix(in srgb, #ef4444 15%, transparent);
+		color: #b91c1c;
+	}
+
+	/* Empty State */
+	.empty-state {
+		padding: var(--space-l);
+		background-color: var(--color-bg-subtle);
+		border-radius: var(--space-xs);
+		text-align: center;
+	}
+
+	.empty-state a {
+		color: var(--color-accent);
+	}
+
+	/* Back Link */
+	.back-link a {
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.back-link a:hover {
+		color: var(--color-accent);
+	}
+</style>

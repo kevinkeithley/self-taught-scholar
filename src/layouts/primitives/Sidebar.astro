@@ -1,0 +1,68 @@
+---
+/**
+ * Sidebar - Two-column layout with sidebar and main content
+ * Wraps when space is insufficient
+ * @see https://every-layout.dev/layouts/sidebar/
+ */
+interface Props {
+	side?: 'left' | 'right';
+	sideWidth?: string;
+	contentMin?: string;
+	space?: string;
+	noStretch?: boolean;
+	class?: string;
+}
+
+const {
+	side = 'left',
+	sideWidth = '16rem',
+	contentMin = '50%',
+	space = 'var(--space-l)',
+	noStretch = false,
+	class: className,
+} = Astro.props;
+---
+
+<div
+	class:list={['with-sidebar', { 'no-stretch': noStretch }, className]}
+	style={`--side-width: ${sideWidth}; --content-min: ${contentMin}; --space: ${space}`}
+	data-side={side}
+>
+	<slot />
+</div>
+
+<style>
+	.with-sidebar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space, 1rem);
+	}
+
+	.with-sidebar.no-stretch {
+		align-items: flex-start;
+	}
+
+	/* Left sidebar: first child is sidebar */
+	.with-sidebar[data-side='left'] > :global(:first-child) {
+		flex-basis: var(--side-width);
+		flex-grow: 1;
+	}
+
+	.with-sidebar[data-side='left'] > :global(:last-child) {
+		flex-basis: 0;
+		flex-grow: 999;
+		min-inline-size: var(--content-min);
+	}
+
+	/* Right sidebar: last child is sidebar */
+	.with-sidebar[data-side='right'] > :global(:first-child) {
+		flex-basis: 0;
+		flex-grow: 999;
+		min-inline-size: var(--content-min);
+	}
+
+	.with-sidebar[data-side='right'] > :global(:last-child) {
+		flex-basis: var(--side-width);
+		flex-grow: 1;
+	}
+</style>

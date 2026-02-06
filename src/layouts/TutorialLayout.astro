@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CourseSidebar from '../components/CourseSidebar.astro';
+import Sidebar from './primitives/Sidebar.astro';
+import Stack from './primitives/Stack.astro';
+import Center from './primitives/Center.astro';
+import Cluster from './primitives/Cluster.astro';
+import { SITE_TITLE } from '../consts';
+
+interface Props {
+	title: string;
+	description: string;
+	courseSlug: string;
+	courseTitle: string;
+	lessonOrder: number;
+	lessonId: string;
+	estimatedMinutes?: number;
+}
+
+const { title, description, courseSlug, courseTitle, lessonOrder, estimatedMinutes } = Astro.props;
+
+// Get all lessons for this course
+const allLessons = await getCollection('courses', (entry) => entry.data.courseSlug === courseSlug && !entry.data.draft);
+const sortedLessons = allLessons.sort((a, b) => a.data.lessonOrder - b.data.lessonOrder);
+
+const currentIndex = sortedLessons.findIndex((l) => l.data.lessonOrder === lessonOrder);
+const prevLesson = currentIndex > 0 ? sortedLessons[currentIndex - 1] : null;
+const nextLesson = currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1] : null;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${title} | ${courseTitle} | ${SITE_TITLE}`} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<Center max="75rem" gutters="0">
+				<Sidebar sideWidth="16rem" contentMin="60%" space="0" noStretch>
+					<aside class="sidebar-container">
+						<CourseSidebar courseSlug={courseSlug} courseTitle={courseTitle} lessons={sortedLessons} currentOrder={lessonOrder} />
+					</aside>
+					<article class="main-content region">
+						<Center max="var(--measure)" gutters="var(--space-m)">
+							<Stack space="var(--space-l)">
+								<header>
+									<Stack space="var(--space-xs)">
+										<p class="lesson-meta text-small text-muted">
+											Lesson {lessonOrder} of {sortedLessons.length}
+											{estimatedMinutes && <span> · {estimatedMinutes} min read</span>}
+										</p>
+										<h1>{title}</h1>
+									</Stack>
+								</header>
+
+								<div class="prose flow">
+									<slot />
+								</div>
+
+								<!-- Prev/Next navigation -->
+								<nav class="lesson-nav">
+									<Cluster justify="space-between" space="var(--space-m)">
+										{prevLesson ? (
+											<a href={`/courses/${courseSlug}/${prevLesson.id}/`} class="nav-link nav-prev">
+												<span class="nav-label text-small">Previous</span>
+												<span class="nav-title">&larr; {prevLesson.data.title}</span>
+											</a>
+										) : (
+											<span></span>
+										)}
+										{nextLesson && (
+											<a href={`/courses/${courseSlug}/${nextLesson.id}/`} class="nav-link nav-next">
+												<span class="nav-label text-small">Next</span>
+												<span class="nav-title">{nextLesson.data.title} &rarr;</span>
+											</a>
+										)}
+									</Cluster>
+								</nav>
+							</Stack>
+						</Center>
+					</article>
+				</Sidebar>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.sidebar-container {
+		border-inline-end: 1px solid var(--color-border);
+		block-size: 100%;
+	}
+
+	@media (max-width: 50rem) {
+		.sidebar-container {
+			display: none;
+		}
+	}
+
+	.lesson-nav {
+		padding-block-start: var(--space-l);
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	.nav-link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3xs);
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.nav-prev {
+		text-align: start;
+	}
+
+	.nav-next {
+		text-align: end;
+	}
+
+	.nav-label {
+		color: var(--color-text-muted);
+	}
+
+	.nav-title {
+		font-weight: 500;
+		transition: color 0.15s ease;
+	}
+
+	.nav-link:hover .nav-title {
+		color: var(--color-accent);
+	}
+</style>

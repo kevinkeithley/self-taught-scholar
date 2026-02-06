@@ -1,0 +1,243 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Subscribe from '../components/Subscribe.astro';
+import Center from '../layouts/primitives/Center.astro';
+import Stack from '../layouts/primitives/Stack.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`About | ${SITE_TITLE}`}
+			description="The story behind The Self-Taught Scholar: why I'm building an alternative to traditional education."
+		/>
+	</head>
+	<body>
+		<Header />
+
+		<main class="region">
+			<Center max="var(--measure)">
+				<article>
+					<Stack space="var(--space-xl)">
+						<!-- Intro -->
+						<header>
+							<Stack space="var(--space-s)">
+								<h1>About The Self-Taught Scholar</h1>
+								<p class="intro">
+									This is an experiment in building educational infrastructure that actually works—accessible,
+									cross-disciplinary, and designed around how people really learn.
+								</p>
+							</Stack>
+						</header>
+
+						<!-- The Problem -->
+						<section>
+							<Stack space="var(--space-m)">
+								<h2>The Problem</h2>
+								<div class="prose flow">
+									<p>
+										Traditional education has a strange relationship with actual learning. We spend years
+										in classrooms, accumulate credentials, and often walk away feeling like we missed
+										something essential. The promise is that structured curriculum and expert instruction
+										will produce capable, knowledgeable people. Sometimes it does. Often it doesn't.
+									</p>
+									<p>
+										The real issue isn't that universities are useless—they're not. It's that they've
+										become the <em>only</em> legitimate path to education, and they're expensive, slow,
+										and increasingly disconnected from what people actually need to know.
+									</p>
+									<p>
+										Meanwhile, real learning keeps happening elsewhere. A single book can restructure
+										how you see the world. A weekend project can teach more than a semester of theory.
+										Conversations with practitioners reveal what textbooks hide. The most valuable
+										education often happens outside the classroom—yet we keep pretending otherwise.
+									</p>
+									<p>
+										Liberal arts education—the kind that teaches you to think across disciplines, to see
+										patterns that connect ideas, to write and reason clearly—is genuinely valuable.
+										But it's been gatekept by institutions that charge six figures and take four years
+										to deliver it. That seems like a problem worth solving.
+									</p>
+								</div>
+							</Stack>
+						</section>
+
+						<!-- The Solution -->
+						<section>
+							<Stack space="var(--space-m)">
+								<h2>The Solution</h2>
+								<div class="prose flow">
+									<p>
+										The Self-Taught Scholar is my attempt to build what I wish had existed: a cross-disciplinary
+										curriculum organized around transferable principles rather than credentials.
+									</p>
+									<p>
+										The structure is simple. Four schools of knowledge—Pattern & Play, Story & Expression,
+										Society & Self, and Making—represent the domains that matter most for understanding
+										the world and doing meaningful work. These aren't arbitrary categories; they're the
+										pillars that support almost everything worth learning.
+									</p>
+									<p>
+										Content is organized into <strong>Atoms</strong> and <strong>Scrolls</strong>. Atoms are
+										bite-sized concepts—foundational ideas you can learn in minutes but build on for years.
+										Scrolls are curated learning paths that combine atoms into coherent journeys. Think of
+										atoms as Lego bricks and scrolls as the instruction manuals that show you what to build.
+									</p>
+									<p>
+										The philosophy behind this comes from Scott Adams: being excellent at one thing is hard
+										and risky, but being good at several complementary things is achievable and often more
+										valuable. A programmer who writes well has an edge. A writer who understands psychology
+										creates more compelling work. The combinations matter more than the individual skills.
+									</p>
+									<p>
+										This isn't about replacing universities. It's about providing an alternative path for
+										people who want to learn without going into debt, who want cross-disciplinary thinking
+										without arbitrary prerequisites, who want to build capability rather than collect credentials.
+									</p>
+								</div>
+							</Stack>
+						</section>
+
+						<!-- Why I'm Building This -->
+						<section>
+							<Stack space="var(--space-m)">
+								<h2>Why I'm Building This</h2>
+								<div class="prose flow">
+									<p>
+										I went through the traditional path—business and math as an undergrad, data science
+										in grad school. The credentials look fine on paper. But looking back, the most
+										important things I learned came from outside the curriculum.
+									</p>
+									<p>
+										A single book like "Zero to One" reshaped how I think about building things. It took
+										maybe eight hours to read. Entire courses didn't have that impact. That gap between
+										time invested and insight gained has always bothered me. Why does so much formal
+										education produce so little actual understanding?
+									</p>
+									<p>
+										Jordan Peterson once said something that stuck with me: focus on the things that
+										bother you and try to make them better. Education bothers me. Not because learning
+										is hard—it should be—but because we've built systems that make it harder than
+										necessary, more expensive than it needs to be, and less effective than it could be.
+									</p>
+									<p>
+										So this is my attempt to fix what I can. I'm not naive about it—one person can't
+										redesign education. But I can build something useful, test what works, and iterate.
+										Maybe it helps a few people learn more effectively. Maybe it becomes something bigger.
+										Either way, it's better than just complaining about the problem.
+									</p>
+								</div>
+							</Stack>
+						</section>
+
+						<!-- The Approach -->
+						<section>
+							<Stack space="var(--space-m)">
+								<h2>The Approach</h2>
+								<div class="prose flow">
+									<p>
+										I'm building this in public, which means you're seeing it in progress. The Library
+										of Atoms is growing—foundational concepts across the four schools, organized for
+										easy reference and spaced repetition. The first Scroll is in development, a structured
+										learning path that will combine atoms into a coherent curriculum.
+									</p>
+									<p>
+										The blog is where I work through ideas about learning, education, and cross-disciplinary
+										thinking. Essays will go deeper on foundational topics—the kind of evergreen pieces
+										you can return to. Everything is connected; reading one thing should make you curious
+										about another.
+									</p>
+									<p>
+										This approach is deliberately iterative. I'd rather ship something useful and improve
+										it based on feedback than spend years building in isolation. If an atom is confusing,
+										I'll rewrite it. If a scroll doesn't work, I'll restructure it. The goal is to
+										create something that actually helps people learn, not to prove that my initial
+										design was correct.
+									</p>
+								</div>
+							</Stack>
+						</section>
+
+						<!-- What's Next -->
+						<section>
+							<Stack space="var(--space-m)">
+								<h2>What's Next</h2>
+								<div class="prose flow">
+									<p>
+										Right now, I'm focused on building the foundation. Growing the Library with essential
+										atoms across all four schools. Developing the first Scroll—a structured learning path
+										that demonstrates what this approach can offer. Writing regularly about the ideas
+										that underpin all of this.
+									</p>
+									<p>
+										If this resonates with you, there are a few ways to get involved. Subscribe to follow
+										along as the platform develops. Read the blog to see if this perspective on learning
+										matches yours. And if you have thoughts, feedback, or questions, reach out. Building
+										in public means building with the community that forms around the work.
+									</p>
+									<p>
+										This is version 0.1. It will get better. Thanks for being here early.
+									</p>
+								</div>
+							</Stack>
+						</section>
+
+						<!-- Signature -->
+						<footer class="signature">
+							<p>— Kevin</p>
+						</footer>
+
+						<!-- Subscribe -->
+						<section class="subscribe-section">
+							<Stack space="var(--space-m)">
+								<Stack space="var(--space-xs)">
+									<h2 class="h3">Follow the Journey</h2>
+									<p class="text-muted">
+										Get updates as new atoms, scrolls, and ideas come together.
+									</p>
+								</Stack>
+								<Subscribe
+									title=""
+									blurb="Occasional emails. No spam. Unsubscribe anytime."
+									showCheckboxes={true}
+									defaultInterests={["blog", "courses"]}
+								/>
+							</Stack>
+						</section>
+					</Stack>
+				</article>
+			</Center>
+		</main>
+
+		<Footer hideSubscribe={true} />
+	</body>
+</html>
+
+<style>
+	.intro {
+		font-size: var(--step-1);
+		color: var(--color-text-muted);
+		line-height: 1.5;
+	}
+
+	h2 {
+		padding-block-end: var(--space-xs);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.signature {
+		padding-block-start: var(--space-m);
+		font-style: italic;
+		color: var(--color-text-muted);
+	}
+
+	.subscribe-section {
+		padding: var(--space-l);
+		background-color: var(--color-bg-subtle);
+		border-radius: var(--space-xs);
+	}
+</style>

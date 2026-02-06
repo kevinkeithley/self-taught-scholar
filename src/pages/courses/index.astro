@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Center from '../../layouts/primitives/Center.astro';
+import Stack from '../../layouts/primitives/Stack.astro';
+import Grid from '../../layouts/primitives/Grid.astro';
+import { SITE_TITLE } from '../../consts';
+
+const allLessons = await getCollection('courses', (entry) => !entry.data.draft);
+
+// Group lessons by course
+const courseMap = new Map<string, { title: string; lessons: typeof allLessons }>();
+for (const lesson of allLessons) {
+	const { courseSlug, courseTitle } = lesson.data;
+	if (!courseMap.has(courseSlug)) {
+		courseMap.set(courseSlug, { title: courseTitle, lessons: [] });
+	}
+	courseMap.get(courseSlug)!.lessons.push(lesson);
+}
+
+// Sort lessons within each course
+for (const course of courseMap.values()) {
+	course.lessons.sort((a, b) => a.data.lessonOrder - b.data.lessonOrder);
+}
+
+const courses = Array.from(courseMap.entries()).map(([slug, data]) => ({
+	slug,
+	title: data.title,
+	lessonCount: data.lessons.length,
+	totalMinutes: data.lessons.reduce((sum, l) => sum + (l.data.estimatedMinutes || 0), 0),
+}));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Courses | ${SITE_TITLE}`} description="Scrolls - structured learning paths for the self-taught scholar." />
+	</head>
+	<body>
+		<Header />
+		<main class="region">
+			<Center max="var(--measure-wide)">
+				<Stack space="var(--space-l)">
+					<header>
+						<Stack space="var(--space-xs)">
+							<h1>Courses</h1>
+							<p class="text-muted">Scrolls - structured learning paths for the self-taught scholar.</p>
+						</Stack>
+					</header>
+
+					<Grid min="320px" space="var(--space-m)">
+						{courses.map((course) => (
+							<a href={`/courses/${course.slug}/`} class="course-card card">
+								<Stack space="var(--space-xs)">
+									<h2 class="course-title">{course.title}</h2>
+									<p class="text-small text-muted">
+										{course.lessonCount} lesson{course.lessonCount !== 1 && 's'}
+										{course.totalMinutes > 0 && <span> · {course.totalMinutes} min total</span>}
+									</p>
+								</Stack>
+							</a>
+						))}
+					</Grid>
+
+					{courses.length === 0 && (
+						<p class="text-muted" style="text-align: center">No courses available yet. Check back soon!</p>
+					)}
+				</Stack>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.course-card {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.course-title {
+		font-size: var(--step-1);
+		font-weight: 600;
+		line-height: 1.3;
+		transition: color 0.15s ease;
+	}
+
+	.course-card:hover .course-title {
+		color: var(--color-accent);
+	}
+</style>

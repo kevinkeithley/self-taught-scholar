@@ -1,0 +1,51 @@
+---
+title: Compound Interest
+description: How money grows exponentially when interest earns interest, demonstrating the power of exponential growth over time
+school: pattern-and-play
+domain: mathematics
+difficulty: beginner
+---
+
+import CompoundInterestCalculator from '../../components/CompoundInterestCalculator.tsx';
+
+Compound interest is interest calculated on both the initial principal and the accumulated interest from previous periods. Unlike simple interest (which only earns on the principal), compound interest creates exponential growth.
+
+## The Formula
+
+The compound interest formula is:
+
+**A = P(1 + r/n)^(nt)**
+
+Where:
+- A = final amount
+- P = principal (initial investment)
+- r = annual interest rate (as a decimal)
+- n = number of times interest compounds per year
+- t = time in years
+
+## Why It Matters
+
+Compound interest demonstrates a fundamental pattern in nature and finance: **exponential growth**. Small differences in interest rates or time periods create dramatic differences in outcomes.
+
+For example:
+- $1,000 at 5% for 30 years = $4,322
+- $1,000 at 7% for 30 years = $7,612
+- $1,000 at 5% for 40 years = $7,040
+
+The extra 2% rate nearly doubles the result. The extra 10 years (at 5%) has almost the same effect as the higher rate.
+
+## Try It Yourself
+
+Adjust the sliders to see how different variables affect your final amount. Pay attention to how dramatically time changes the outcome.
+
+<CompoundInterestCalculator client:load />
+
+## The Key Insight
+
+Einstein allegedly called compound interest "the eighth wonder of the world." The pattern reveals:
+- Time matters more than you think
+- Starting early beats starting with more money
+- Small rate differences compound dramatically
+- Exponential thinking applies beyond money (habits, learning, network effects)
+
+This is why understanding compound interest isn't just about finance—it's about recognizing exponential patterns everywhere.

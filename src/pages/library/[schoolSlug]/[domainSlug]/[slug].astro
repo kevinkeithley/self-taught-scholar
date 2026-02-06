@@ -1,0 +1,223 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BaseHead from '../../../../components/BaseHead.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import LibrarySidebar from '../../../../components/LibrarySidebar.astro';
+import Sidebar from '../../../../layouts/primitives/Sidebar.astro';
+import Stack from '../../../../layouts/primitives/Stack.astro';
+import Center from '../../../../layouts/primitives/Center.astro';
+import { SITE_TITLE } from '../../../../consts';
+import { schoolsBySlug, type SchoolSlug } from '../../../../data/schools';
+
+// Format domain slug to title case
+function formatDomain(domain: string): string {
+	return domain
+		.split('-')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
+export async function getStaticPaths() {
+	const atoms = await getCollection('library');
+	return atoms.map((atom) => ({
+		params: {
+			schoolSlug: atom.data.school,
+			domainSlug: atom.data.domain,
+			slug: atom.id,
+		},
+		props: atom,
+	}));
+}
+
+const atom = Astro.props as CollectionEntry<'library'>;
+const { schoolSlug, domainSlug } = Astro.params;
+const { Content } = await render(atom);
+
+const school = schoolsBySlug[schoolSlug as SchoolSlug];
+
+// Get all library entries grouped by school for sidebar
+const allAtoms = await getCollection('library');
+const atomsBySchool = allAtoms.reduce(
+	(acc, a) => {
+		const s = a.data.school;
+		if (!acc[s]) acc[s] = [];
+		acc[s].push(a);
+		return acc;
+	},
+	{} as Record<string, typeof allAtoms>,
+);
+
+// Sort atoms within each school alphabetically
+for (const s of Object.keys(atomsBySchool)) {
+	atomsBySchool[s].sort((a, b) => a.data.title.localeCompare(b.data.title));
+}
+
+// Get related atoms data
+const relatedAtomsData = atom.data.relatedAtoms
+	? allAtoms.filter((a) => atom.data.relatedAtoms?.includes(a.id))
+	: [];
+
+const difficultyColors: Record<string, string> = {
+	beginner: 'difficulty-beginner',
+	intermediate: 'difficulty-intermediate',
+	advanced: 'difficulty-advanced',
+};
+
+const formattedDomain = formatDomain(domainSlug);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${atom.data.title} | Library | ${SITE_TITLE}`} description={atom.data.description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<Center max="75rem" gutters="0">
+				<Sidebar sideWidth="16rem" contentMin="60%" space="0" noStretch>
+					<aside class="sidebar-container">
+						<LibrarySidebar
+							atomsBySchool={atomsBySchool}
+							currentSlug={atom.id}
+							currentSchool={schoolSlug}
+							currentDomain={domainSlug}
+						/>
+					</aside>
+					<article class="main-content region">
+						<Center max="var(--measure)" gutters="var(--space-m)">
+							<Stack space="var(--space-l)">
+								<!-- Breadcrumbs -->
+								<nav class="breadcrumbs text-small">
+									<a href="/library">Library</a>
+									<span class="separator">/</span>
+									<a href={`/library/${schoolSlug}/`}>{school?.name || schoolSlug}</a>
+									<span class="separator">/</span>
+									<a href={`/library/${schoolSlug}/${domainSlug}/`}>{formattedDomain}</a>
+									<span class="separator">/</span>
+									<span>{atom.data.title}</span>
+								</nav>
+
+								<header>
+									<Stack space="var(--space-xs)">
+										<h1>{atom.data.title}</h1>
+										{atom.data.difficulty && (
+											<span class={`difficulty-badge ${difficultyColors[atom.data.difficulty]}`}>
+												{atom.data.difficulty}
+											</span>
+										)}
+									</Stack>
+								</header>
+
+								<div class="prose flow">
+									<Content />
+								</div>
+
+								<!-- Related Atoms -->
+								{relatedAtomsData.length > 0 && (
+									<aside class="related-atoms">
+										<Stack space="var(--space-s)">
+											<h2 class="h4">Related Atoms</h2>
+											<ul role="list" class="related-list">
+												{relatedAtomsData.map((relatedAtom) => (
+													<li>
+														<a href={`/library/${relatedAtom.data.school}/${relatedAtom.data.domain}/${relatedAtom.id}/`}>
+															{relatedAtom.data.title}
+														</a>
+													</li>
+												))}
+											</ul>
+										</Stack>
+									</aside>
+								)}
+							</Stack>
+						</Center>
+					</article>
+				</Sidebar>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.sidebar-container {
+		border-inline-end: 1px solid var(--color-border);
+		block-size: 100%;
+	}
+
+	@media (max-width: 50rem) {
+		.sidebar-container {
+			display: none;
+		}
+	}
+
+	.breadcrumbs {
+		color: var(--color-text-muted);
+	}
+
+	.breadcrumbs a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.breadcrumbs a:hover {
+		color: var(--color-text);
+	}
+
+	.separator {
+		margin-inline: var(--space-2xs);
+	}
+
+	.difficulty-badge {
+		display: inline-block;
+		width: fit-content;
+		padding-inline: var(--space-2xs);
+		padding-block: var(--space-3xs);
+		font-size: var(--step--2);
+		font-weight: 500;
+		border-radius: 9999px;
+	}
+
+	.difficulty-beginner {
+		background-color: color-mix(in srgb, #22c55e 15%, transparent);
+		color: #15803d;
+	}
+
+	.difficulty-intermediate {
+		background-color: color-mix(in srgb, #eab308 15%, transparent);
+		color: #a16207;
+	}
+
+	.difficulty-advanced {
+		background-color: color-mix(in srgb, #ef4444 15%, transparent);
+		color: #b91c1c;
+	}
+
+	.related-atoms {
+		padding: var(--space-m);
+		border: 1px solid var(--color-border);
+		border-radius: var(--space-xs);
+		background-color: var(--color-bg-subtle);
+	}
+
+	.related-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.related-list li + li {
+		margin-block-start: var(--space-2xs);
+	}
+
+	.related-list a {
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+	}
+
+	.related-list a:hover {
+		color: var(--color-text);
+	}
+</style>

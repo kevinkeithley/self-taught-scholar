@@ -1,0 +1,46 @@
+---
+/**
+ * Box - Consistent padding/border wrapper
+ * Applies uniform padding and optional borders
+ * @see https://every-layout.dev/layouts/box/
+ */
+interface Props {
+	padding?: string;
+	borderWidth?: string;
+	invert?: boolean;
+	class?: string;
+}
+
+const {
+	padding = 'var(--space-m)',
+	borderWidth = '0',
+	invert = false,
+	class: className,
+} = Astro.props;
+---
+
+<div
+	class:list={['box', { invert }, className]}
+	style={`--padding: ${padding}; --border-width: ${borderWidth}`}
+>
+	<slot />
+</div>
+
+<style>
+	.box {
+		padding: var(--padding, 1rem);
+		border: var(--border-width, 0) solid;
+		border-color: var(--color-border, currentColor);
+		background-color: var(--color-bg, transparent);
+	}
+
+	.box.invert {
+		background-color: var(--color-bg-invert, var(--color-dark));
+		color: var(--color-text-invert, var(--color-light));
+	}
+
+	/* Ensure consistent spacing inside */
+	.box :global(* + *) {
+		margin-block-start: var(--flow-space, 1em);
+	}
+</style>

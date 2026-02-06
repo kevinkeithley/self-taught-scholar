@@ -1,0 +1,63 @@
+---
+import Subscribe from "./Subscribe.astro";
+import Center from "../layouts/primitives/Center.astro";
+import Stack from "../layouts/primitives/Stack.astro";
+import Cluster from "../layouts/primitives/Cluster.astro";
+import Sidebar from "../layouts/primitives/Sidebar.astro";
+
+interface Props {
+	hideSubscribe?: boolean;
+}
+
+const { hideSubscribe = false } = Astro.props;
+const today = new Date();
+---
+
+<footer class="site-footer">
+	<Center max="var(--measure-wide)">
+		<Stack space="var(--space-l)">
+			{!hideSubscribe && (
+				<Sidebar sideWidth="20rem" contentMin="50%" space="var(--space-xl)">
+					<Stack space="var(--space-2xs)">
+						<h2 class="h4">Get updates</h2>
+						<p class="text-muted">Occasional emails when something worth reading drops.</p>
+					</Stack>
+					<Subscribe
+						compact={true}
+						showCheckboxes={false}
+						defaultInterests={["blog", "courses"]}
+						title=""
+						blurb="No spam. Unsubscribe anytime."
+					/>
+				</Sidebar>
+			)}
+
+			<div class:list={['footer-bottom', { 'no-border': hideSubscribe }]}>
+				<Cluster justify="space-between" space="var(--space-m)">
+					<p class="text-small text-muted">
+						© {today.getFullYear()} Self-Taught Scholar. All rights reserved.
+					</p>
+					<span></span>
+				</Cluster>
+			</div>
+		</Stack>
+	</Center>
+</footer>
+
+<style>
+	.site-footer {
+		padding-block: var(--space-xl);
+		border-block-start: 1px solid var(--color-border);
+		background-color: var(--color-bg);
+	}
+
+	.footer-bottom {
+		padding-block-start: var(--space-m);
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	.footer-bottom.no-border {
+		padding-block-start: 0;
+		border-block-start: none;
+	}
+</style>

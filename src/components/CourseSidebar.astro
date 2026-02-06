@@ -1,0 +1,160 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Stack from '../layouts/primitives/Stack.astro';
+
+interface Props {
+	courseSlug: string;
+	courseTitle: string;
+	lessons: CollectionEntry<'courses'>[];
+	currentOrder: number;
+}
+
+const { courseSlug, courseTitle, lessons, currentOrder } = Astro.props;
+const progressPercent = (currentOrder / lessons.length) * 100;
+---
+
+<nav class="course-sidebar">
+	<Stack space="var(--space-m)">
+		<Stack space="var(--space-2xs)">
+			<a href="/courses" class="back-link text-small">&larr; All Courses</a>
+			<h2 class="course-title">{courseTitle}</h2>
+			<p class="progress-text text-small text-muted">{currentOrder} of {lessons.length} lessons</p>
+		</Stack>
+
+		<div class="progress-bar" role="progressbar" aria-valuenow={currentOrder} aria-valuemin="1" aria-valuemax={lessons.length}>
+			<div class="progress-fill" style={`inline-size: ${progressPercent}%`}></div>
+		</div>
+
+		<ol class="lesson-list" role="list">
+			{lessons.map((lesson, index) => {
+				const isActive = lesson.data.lessonOrder === currentOrder;
+				const isCompleted = lesson.data.lessonOrder < currentOrder;
+
+				return (
+					<li>
+						<a
+							href={`/courses/${courseSlug}/${lesson.id}/`}
+							class:list={['lesson-link', { active: isActive, completed: isCompleted }]}
+							aria-current={isActive ? 'page' : undefined}
+						>
+							<span class:list={['lesson-number', { completed: isCompleted, active: isActive }]}>
+								{index + 1}
+							</span>
+							<span class="lesson-title">{lesson.data.title}</span>
+							{lesson.data.estimatedMinutes && (
+								<span class="lesson-time text-small">{lesson.data.estimatedMinutes} min</span>
+							)}
+						</a>
+					</li>
+				);
+			})}
+		</ol>
+	</Stack>
+</nav>
+
+<style>
+	.course-sidebar {
+		padding: var(--space-m);
+		block-size: 100%;
+		overflow-y: auto;
+	}
+
+	.back-link {
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.back-link:hover {
+		color: var(--color-text);
+	}
+
+	.course-title {
+		font-size: var(--step-0);
+		font-weight: 700;
+		line-height: 1.3;
+	}
+
+	.progress-bar {
+		block-size: 4px;
+		background-color: var(--color-border);
+		border-radius: 2px;
+		overflow: hidden;
+	}
+
+	.progress-fill {
+		block-size: 100%;
+		background-color: #22c55e;
+		border-radius: 2px;
+		transition: inline-size 0.3s ease;
+	}
+
+	.lesson-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.lesson-list li {
+		margin: 0;
+	}
+
+	.lesson-link {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--space-xs);
+		padding-block: var(--space-2xs);
+		padding-inline: var(--space-2xs);
+		text-decoration: none;
+		border-radius: var(--space-3xs);
+		transition: background-color 0.15s ease;
+	}
+
+	.lesson-link:hover {
+		background-color: var(--color-bg-subtle);
+	}
+
+	.lesson-link.active {
+		background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+	}
+
+	.lesson-number {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		font-size: var(--step--2);
+		font-weight: 600;
+		background-color: var(--color-border);
+		color: var(--color-text);
+		border-radius: 50%;
+	}
+
+	.lesson-number.completed {
+		background-color: #22c55e;
+		color: white;
+	}
+
+	.lesson-number.active {
+		background-color: var(--color-accent);
+		color: white;
+	}
+
+	.lesson-title {
+		flex: 1;
+		font-size: var(--step--1);
+		color: var(--color-text);
+		line-height: 1.4;
+	}
+
+	.lesson-link.active .lesson-title {
+		color: var(--color-accent);
+		font-weight: 500;
+	}
+
+	.lesson-time {
+		flex-shrink: 0;
+		color: var(--color-text-muted);
+	}
+</style>

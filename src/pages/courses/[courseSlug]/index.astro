@@ -1,0 +1,189 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import Center from '../../../layouts/primitives/Center.astro';
+import Stack from '../../../layouts/primitives/Stack.astro';
+import { SITE_TITLE } from '../../../consts';
+
+export async function getStaticPaths() {
+	const allLessons = await getCollection('courses', (entry) => !entry.data.draft);
+
+	// Get unique course slugs
+	const courseSlugs = [...new Set(allLessons.map((l) => l.data.courseSlug))];
+
+	return courseSlugs.map((courseSlug) => {
+		const lessons = allLessons
+			.filter((l) => l.data.courseSlug === courseSlug)
+			.sort((a, b) => a.data.lessonOrder - b.data.lessonOrder);
+		const firstLesson = lessons[0];
+
+		return {
+			params: { courseSlug },
+			props: {
+				courseSlug,
+				courseTitle: firstLesson.data.courseTitle,
+				lessons,
+			},
+		};
+	});
+}
+
+interface Props {
+	courseSlug: string;
+	courseTitle: string;
+	lessons: Awaited<ReturnType<typeof getCollection<'courses'>>>;
+}
+
+const { courseSlug, courseTitle, lessons } = Astro.props;
+const totalMinutes = lessons.reduce((sum, l) => sum + (l.data.estimatedMinutes || 0), 0);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${courseTitle} | Courses | ${SITE_TITLE}`} description={`A course on ${courseTitle} with ${lessons.length} lessons.`} />
+	</head>
+	<body>
+		<Header />
+		<main class="region">
+			<Center max="var(--measure)">
+				<Stack space="var(--space-l)">
+					<nav>
+						<a href="/courses" class="back-link text-small">&larr; All Courses</a>
+					</nav>
+
+					<header>
+						<Stack space="var(--space-xs)">
+							<h1>{courseTitle}</h1>
+							<p class="text-muted">
+								{lessons.length} lesson{lessons.length !== 1 && 's'}
+								{totalMinutes > 0 && <span> · {totalMinutes} min total</span>}
+							</p>
+						</Stack>
+					</header>
+
+					<section>
+						<Stack space="var(--space-m)">
+							<h2 class="h3">Course Outline</h2>
+							<ol class="lesson-list" role="list">
+								{lessons.map((lesson, index) => (
+									<li>
+										<a href={`/courses/${courseSlug}/${lesson.id}/`} class="lesson-card card">
+											<span class="lesson-number">{index + 1}</span>
+											<Stack space="var(--space-3xs)" class="lesson-content">
+												<h3 class="lesson-title">{lesson.data.title}</h3>
+												<p class="lesson-description text-small text-muted">{lesson.data.description}</p>
+											</Stack>
+											{lesson.data.estimatedMinutes && (
+												<span class="lesson-time text-small text-muted">{lesson.data.estimatedMinutes} min</span>
+											)}
+										</a>
+									</li>
+								))}
+							</ol>
+						</Stack>
+					</section>
+
+					<a href={`/courses/${courseSlug}/${lessons[0].id}/`} class="start-button">
+						Start Course &rarr;
+					</a>
+				</Stack>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.back-link {
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.back-link:hover {
+		color: var(--color-text);
+	}
+
+	.lesson-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.lesson-list li {
+		margin: 0;
+	}
+
+	.lesson-list li + li {
+		margin-block-start: var(--space-s);
+	}
+
+	.lesson-card {
+		display: flex;
+		align-items: center;
+		gap: var(--space-m);
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.lesson-number {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 2rem;
+		block-size: 2rem;
+		font-size: var(--step--1);
+		font-weight: 600;
+		background-color: var(--color-bg-subtle);
+		color: var(--color-text-muted);
+		border-radius: 50%;
+	}
+
+	.lesson-content {
+		flex: 1;
+		min-inline-size: 0;
+	}
+
+	.lesson-title {
+		font-size: var(--step-0);
+		font-weight: 500;
+		transition: color 0.15s ease;
+	}
+
+	.lesson-card:hover .lesson-title {
+		color: var(--color-accent);
+	}
+
+	.lesson-description {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.lesson-time {
+		flex-shrink: 0;
+	}
+
+	.start-button {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2xs);
+		padding-block: var(--space-s);
+		padding-inline: var(--space-m);
+		font-size: var(--step--1);
+		font-weight: 500;
+		color: var(--color-light);
+		background-color: var(--color-dark);
+		border-radius: var(--space-xs);
+		text-decoration: none;
+		transition: background-color 0.15s ease;
+	}
+
+	.start-button:hover {
+		background-color: var(--color-text);
+	}
+</style>

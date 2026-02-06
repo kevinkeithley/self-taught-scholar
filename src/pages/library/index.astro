@@ -1,0 +1,264 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LibrarySidebar from '../../components/LibrarySidebar.astro';
+import Sidebar from '../../layouts/primitives/Sidebar.astro';
+import Stack from '../../layouts/primitives/Stack.astro';
+import Grid from '../../layouts/primitives/Grid.astro';
+import Center from '../../layouts/primitives/Center.astro';
+import { SITE_TITLE } from '../../consts';
+import { schools } from '../../data/schools';
+
+const allAtoms = await getCollection('library');
+
+// Group by school
+const atomsBySchool = allAtoms.reduce(
+	(acc, atom) => {
+		const s = atom.data.school;
+		if (!acc[s]) acc[s] = [];
+		acc[s].push(atom);
+		return acc;
+	},
+	{} as Record<string, typeof allAtoms>,
+);
+
+// Sort atoms within each school
+for (const s of Object.keys(atomsBySchool)) {
+	atomsBySchool[s].sort((a, b) => a.data.title.localeCompare(b.data.title));
+}
+
+// Count atoms and domains per school
+const atomCounts = schools.reduce((acc, school) => {
+	acc[school.slug] = atomsBySchool[school.slug]?.length || 0;
+	return acc;
+}, {} as Record<string, number>);
+
+const domainCounts = schools.reduce((acc, school) => {
+	const atoms = atomsBySchool[school.slug] || [];
+	const uniqueDomains = new Set(atoms.map(atom => atom.data.domain));
+	acc[school.slug] = uniqueDomains.size;
+	return acc;
+}, {} as Record<string, number>);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Library | ${SITE_TITLE}`} description="Atoms of knowledge organized across four schools—Pattern & Play, Story & Expression, Society & Self, and Making." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<Center max="75rem" gutters="0">
+				<Sidebar sideWidth="16rem" contentMin="60%" space="0" noStretch>
+					<aside class="sidebar-container">
+						<LibrarySidebar atomsBySchool={atomsBySchool} />
+					</aside>
+					<div class="main-content region">
+						<Center max="var(--measure-wide)" gutters="var(--space-m)">
+							<Stack space="var(--space-xl)">
+								<header>
+									<Stack space="var(--space-s)">
+										<h1>Library</h1>
+										<p class="intro">
+											The Library organizes knowledge into Atoms—foundational concepts designed to be
+											learned in minutes but built upon for years. Each atom belongs to one of four schools,
+											representing the pillars of cross-disciplinary education.
+										</p>
+									</Stack>
+								</header>
+
+								<!-- Schools Grid -->
+								<Grid min="320px" space="var(--space-l)">
+									{schools.map((school) => (
+										<a href={`/library/${school.slug}/`} class="school-card">
+											<Stack space="var(--space-m)">
+												<header class="school-header">
+													<span class="school-emoji">{school.emoji}</span>
+													<h2>{school.name}</h2>
+												</header>
+
+												<p class="school-description">{school.description}</p>
+
+												<footer class="school-footer">
+													<span class="atom-count">
+														{domainCounts[school.slug]} domain{domainCounts[school.slug] !== 1 && 's'} · {atomCounts[school.slug]} atom{atomCounts[school.slug] !== 1 && 's'}
+													</span>
+													<span class="explore-link">Explore →</span>
+												</footer>
+											</Stack>
+										</a>
+									))}
+								</Grid>
+
+								<!-- How It Works -->
+								<section class="how-it-works">
+									<Stack space="var(--space-m)">
+										<h2 class="h3">How the Library Works</h2>
+										<div class="hierarchy">
+											<div class="hierarchy-level">
+												<span class="hierarchy-icon">🏫</span>
+												<Stack space="var(--space-2xs)">
+													<h3 class="h4">Schools</h3>
+													<p class="text-small text-muted">
+														Four domains of knowledge that form the foundation of cross-disciplinary thinking.
+														Each school contains multiple related domains.
+													</p>
+												</Stack>
+											</div>
+											<div class="hierarchy-arrow">↓</div>
+											<div class="hierarchy-level">
+												<span class="hierarchy-icon">🗺️</span>
+												<Stack space="var(--space-2xs)">
+													<h3 class="h4">Domains</h3>
+													<p class="text-small text-muted">
+														Specific areas within each school. Mathematics, Psychology, Writing—these are
+														the categories that organize atoms into coherent groups.
+													</p>
+												</Stack>
+											</div>
+											<div class="hierarchy-arrow">↓</div>
+											<div class="hierarchy-level">
+												<span class="hierarchy-icon">📄</span>
+												<Stack space="var(--space-2xs)">
+													<h3 class="h4">Atoms</h3>
+													<p class="text-small text-muted">
+														Bite-sized concepts—the building blocks of understanding. Each atom is designed
+														to be learned quickly and remembered permanently.
+													</p>
+												</Stack>
+											</div>
+										</div>
+									</Stack>
+								</section>
+							</Stack>
+						</Center>
+					</div>
+				</Sidebar>
+			</Center>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.sidebar-container {
+		border-inline-end: 1px solid var(--color-border);
+		block-size: 100%;
+	}
+
+	@media (max-width: 50rem) {
+		.sidebar-container {
+			display: none;
+		}
+	}
+
+	.intro {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		max-inline-size: 65ch;
+	}
+
+	/* School Cards */
+	.school-card {
+		display: block;
+		padding: var(--space-l);
+		background-color: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--space-xs);
+		text-decoration: none;
+		color: inherit;
+		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	}
+
+	.school-card:hover {
+		border-color: var(--color-text-muted);
+		box-shadow: var(--box-shadow);
+	}
+
+	.school-header {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--space-s);
+	}
+
+	.school-emoji {
+		font-size: var(--step-3);
+		line-height: 1;
+	}
+
+	.school-card h2 {
+		font-size: var(--step-1);
+		font-weight: 600;
+		transition: color 0.15s ease;
+	}
+
+	.school-card:hover h2 {
+		color: var(--color-accent);
+	}
+
+	.school-description {
+		font-size: var(--step--1);
+		color: var(--color-text);
+		line-height: 1.6;
+	}
+
+	.school-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-block-start: var(--space-s);
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	.atom-count {
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+	}
+
+	.explore-link {
+		font-size: var(--step--1);
+		font-weight: 500;
+		color: var(--color-accent);
+	}
+
+	/* How It Works */
+	.how-it-works {
+		padding: var(--space-l);
+		background-color: var(--color-bg-subtle);
+		border-radius: var(--space-xs);
+	}
+
+	.hierarchy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-s);
+		max-inline-size: 32rem;
+		margin-inline: auto;
+	}
+
+	.hierarchy-level {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--space-m);
+		padding: var(--space-m);
+		background-color: var(--color-bg);
+		border-radius: var(--space-2xs);
+		inline-size: 100%;
+	}
+
+	.hierarchy-icon {
+		flex-shrink: 0;
+		font-size: var(--step-2);
+		line-height: 1;
+	}
+
+	.hierarchy-arrow {
+		font-size: var(--step-1);
+		color: var(--color-text-muted);
+		line-height: 1;
+	}
+</style>

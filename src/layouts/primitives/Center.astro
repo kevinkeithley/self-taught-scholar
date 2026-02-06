@@ -1,0 +1,48 @@
+---
+/**
+ * Center - Max-width centering with intrinsic padding
+ * Centers content horizontally with consistent gutters
+ * @see https://every-layout.dev/layouts/center/
+ */
+interface Props {
+	max?: string;
+	gutters?: string;
+	intrinsic?: boolean;
+	andText?: boolean;
+	class?: string;
+}
+
+const {
+	max = 'var(--measure)',
+	gutters = 'var(--space-m)',
+	intrinsic = false,
+	andText = false,
+	class: className,
+} = Astro.props;
+---
+
+<div
+	class:list={['center', { intrinsic, 'and-text': andText }, className]}
+	style={`--max: ${max}; --gutters: ${gutters}`}
+>
+	<slot />
+</div>
+
+<style>
+	.center {
+		box-sizing: content-box;
+		max-inline-size: var(--max);
+		margin-inline: auto;
+		padding-inline: var(--gutters);
+	}
+
+	.center.intrinsic {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.center.and-text {
+		text-align: center;
+	}
+</style>
