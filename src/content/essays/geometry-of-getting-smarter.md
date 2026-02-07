@@ -27,29 +27,33 @@ Points are necessary — you can't build without them. But a pile of points is j
 
 ## Lines: The First Real Leap
 
-A line connects two points. It's the simplest relationship: A leads to B.
+A line connects two points. It's the simplest relationship — not cause and effect yet, but a bridge between two different kinds of knowing.
 
-"Turning on the stove makes the water hotter."
+"The water is 45°F."
 
-Now you have cause and effect. If-then. Input-output. This is where rules of thumb live, where recipes work, where most professional training stops. Learn the procedure, follow the steps, get the result.
+This might look like a small step. You went from "cold" to a number. But something profound just happened: you translated a private, bodily sensation into a symbol that anyone else can understand, compare, and use. You drew a line between what you *felt* and what an instrument *measured*.
 
-Lines are powerful. They let you predict and control. But they're also where most people get stuck — and it's not because they're not smart enough to go further.
+That leap — from phenomenological to symbolic, from body to instrument, from subjective to sharable — is what the philosopher Gaston Bachelard called the first real epistemological rupture. It's not about precision. It's about crossing from one kind of knowing into another entirely.
 
-It's because everything around us rewards linear thinking.
+Most of what we think of as "learning" lives here. Categories, labels, measurements, definitions. The kind of knowledge that lets you name things, sort things, and communicate about things reliably.
 
-Standard education tests single-path answers. Cultural narratives prefer tidy stories — hard work leads to success, bad choices lead to failure. Our brains *prefer* linear heuristics because they're fast and energy-efficient. And perhaps most importantly, linear thinking feels *safe*. Cause and effect is controllable. It implies that if you just pull the right lever, you'll get the right outcome.
+Lines are powerful. They make the world legible. But they're also where most people get stuck — and it's not because they're not smart enough to go further.
 
-The philosopher Gaston Bachelard called this an "epistemological obstacle" — a way of knowing that *works well enough* to prevent you from developing a better way of knowing. You're not stuck because lines are wrong. You're stuck because lines are *sufficient* for most daily purposes, so you never feel the need to leave them behind.
+It's because everything around us rewards this level of thinking. Standard education tests your ability to categorize and measure. Professional training teaches you the right labels and the right numbers. And measurement *feels* like understanding. Once you can put a number on something, it seems like you know it.
+
+Bachelard called this an "epistemological obstacle" — a way of knowing that works well enough to prevent you from developing a better way of knowing. You're not stuck because lines are wrong. You're stuck because lines are *sufficient* for most daily purposes, so you never feel the need to leave them behind.
 
 ## Squares: When Ideas Start Touching Each Other
 
-A square is what happens when multiple lines intersect. Instead of A → B, you have A ↔ B ↔ C, with feedback loops and dependencies flowing in multiple directions.
+A square is what happens when lines start intersecting. You're no longer just connecting experience to measurement — you're watching things *affect each other*.
 
-"Temperature, heat transfer, and time interact — changing one changes the others."
+"Heating the water raises its temperature over time."
 
-Now you're holding multiple variables in your head simultaneously. You're no longer asking "what causes what?" — you're asking "how does this *system* behave?" You can compare models, reason conditionally, and start to see why the same action produces different results in different contexts.
+Now you have cause and effect. Mechanism. Variables that interact: heat input, temperature change, duration. Pull one lever and something else moves. This is where if-then reasoning lives, where recipes work, where most professional expertise operates. You understand not just *what* things are, but *how* they behave when you act on them.
 
-This is where things get genuinely interesting, but also genuinely uncomfortable. Square-level thinking means accepting that simple cause-effect chains are often *incomplete* descriptions of reality. It means sitting with "it depends" as a real answer, not a cop-out. It means acknowledging that the same lever, pulled in a different context, might push the system in the opposite direction.
+This is where things get genuinely interesting, but also genuinely uncomfortable. Square-level thinking means holding multiple variables in your head simultaneously. You're no longer asking "what is this?" — you're asking "how does this system behave?" You can compare models, reason conditionally, and start to see why the same action produces different results in different contexts.
+
+It also means accepting that simple cause-effect chains are often *incomplete* descriptions of reality. It means sitting with "it depends" as a real answer, not a cop-out. It means acknowledging that the same lever, pulled in a different context, might push the system in the opposite direction.
 
 Most people who reach square-level thinking do so in one domain — their profession, a deep hobby, a subject they've studied for years. They understand the internal feedback loops of *that* system. The jump from good to great happens when you start noticing that the *same patterns* show up across different domains entirely.
 

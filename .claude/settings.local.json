@@ -9,7 +9,21 @@
       "Bash(npm run build:*)",
       "Bash(npm run astro:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit - The Self-Taught Scholar v0.1.0\n\n- Blog with CSS evolution post\n- Essays with Continuous Conceptual Scaffolding  \n- Library with School → Domain → Atom hierarchy\n- Interactive compound interest calculator\n- Every Layout design system\n- Cross-linked content architecture\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Vercel adapter for SSR subscribe endpoint\n\n- Install @astrojs/vercel adapter\n- Configure adapter in astro.config.mjs\n- Add .vercel/ to .gitignore\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(convert:*)",
+      "Bash(magick:*)",
+      "Bash(where:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nv0.2.0: Homepage redesign — hero with Switcher layout, principles section, dimensionality table, Schools cards, updated copy, mobile hamburger nav\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)"
     ]
   }
 }
