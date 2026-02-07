@@ -7,56 +7,69 @@ import Center from '../layouts/primitives/Center.astro';
 import Stack from '../layouts/primitives/Stack.astro';
 import Grid from '../layouts/primitives/Grid.astro';
 import Cluster from '../layouts/primitives/Cluster.astro';
+import Sidebar from '../layouts/primitives/Sidebar.astro';
+import Switcher from '../layouts/primitives/Switcher.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
-const schools = [
+const principles = [
 	{
-		name: 'Pattern & Play',
-		emoji: '📊',
-		description: 'Mathematics, probability, systems thinking, and creative reasoning. This school explores how patterns reveal structure in chaos, how chance shapes outcomes, and how playful experimentation leads to deeper understanding of complexity.',
+		title: 'Make AI a servant, not a sovereign.',
+		description: 'Use AI to sharpen your thinking, not replace it. The richer your internal network of ideas, the more intelligently you can prompt, critique, and compose with any tool.',
 	},
 	{
-		name: 'Story & Expression',
-		emoji: '🎭',
-		description: 'Mythology, rhetoric, writing, and visual communication. This school explores how stories structure our understanding, how language persuades, and how expression—whether through words or design—shapes culture and consciousness.',
+		title: 'Understanding lives in relationships.',
+		description: "A fact is a point. A connection is a line. A system is a structure you can navigate. We help you move from memorizing to seeing — from isolated ideas to the geometry of how things fit together.",
 	},
 	{
-		name: 'Society & Self',
-		emoji: '🌱',
-		description: 'Psychology, philosophy, ethics, and human flourishing. This school examines how we learn, why we behave as we do, what gives life meaning, and how freedom and responsibility shape both individuals and communities.',
+		title: 'Learning is something you build.',
+		description: "You don't learn by reading alone. You learn by assembling ideas into something of your own — through writing, questioning, diagramming, and synthesis.",
 	},
 	{
-		name: 'Making',
-		emoji: '🛠️',
-		description: 'Craft, design, building, and publishing. This school emphasizes learning through creation—whether coding a website, writing for an audience, tracking personal systems, or developing any skill through deliberate practice and feedback.',
+		title: 'Clarity compounds.',
+		description: "You don't need mastery to move forward. You need the next clearer idea. Each time you revisit a concept, you see finer structure in what seemed simple before.",
+	},
+	{
+		title: 'The medium shapes the mind.',
+		description: "The tools you use define what you're able to notice. Better learning environments lead to better questions. That's why this site exists — not just as content, but as a place designed for thinking.",
 	},
 ];
 
-const sections = [
+const schools = [
 	{
-		name: 'Blog',
-		status: 'Live',
-		description: 'Regular posts on learning, education, and cross-disciplinary thinking.',
-		href: '/blog',
+		name: 'Story & Expression',
+		slug: 'story-and-expression',
+		emoji: '🎭',
+		tagline: 'Meaning through narrative and symbol',
+		domains: 'Mythology, rhetoric, storycraft, writing',
 	},
 	{
-		name: 'Essays',
-		status: 'Coming soon',
-		description: 'Long-form foundational pieces exploring deeper ideas.',
-		href: '/essays',
+		name: 'Pattern & Play',
+		slug: 'pattern-and-play',
+		emoji: '📊',
+		tagline: 'Meaning through structure and system',
+		domains: 'Logic, probability, data, complexity',
 	},
 	{
-		name: 'Library',
-		status: 'In progress',
-		description: 'Growing collection of Atoms—bite-sized concepts you can build on.',
-		href: '/library',
+		name: 'Society & Self',
+		slug: 'society-and-self',
+		emoji: '🌱',
+		tagline: 'Meaning through psychology and ethics',
+		domains: 'Philosophy, motivation, learning theory',
 	},
 	{
-		name: 'Courses',
-		status: 'First one launching soon',
-		description: 'Structured Scrolls for deep, sequential learning.',
-		href: '/courses',
+		name: 'Making',
+		slug: 'making',
+		emoji: '🛠️',
+		tagline: 'Meaning through creation and practice',
+		domains: 'Web design, craft, design, publishing',
 	},
+];
+
+const dimensions = [
+	{ level: 'Point', meaning: 'An isolated observation', example: '"The water is cold."' },
+	{ level: 'Line', meaning: 'Connecting experience to measurement', example: '"The water is 45°F."' },
+	{ level: 'Square', meaning: 'Interacting variables', example: '"Heating the water raises its temperature over time."' },
+	{ level: 'Cube', meaning: 'Systems-level thinking', example: '"Temperature, heat transfer, molecular motion, and entropy co-vary within a thermodynamic system."' },
 ];
 ---
 
@@ -70,113 +83,155 @@ const sections = [
 
 		<main>
 			<!-- Hero Section -->
-			<section class="hero region">
-				<Center max="var(--measure)">
-					<Stack space="var(--space-l)">
-						<Stack space="var(--space-s)" class="hero-text">
-							<h1>The Self-Taught Scholar</h1>
-							<p class="tagline">Cross-disciplinary liberal arts education, accessible and affordable.</p>
-						</Stack>
-						<p class="intro">
-							We're building something different: an educational platform that treats learning as a lifelong craft,
-							not a credential to collect. Our focus is on transferable skills across four schools of knowledge—because
-							the most valuable thinkers are the ones who can connect ideas across domains.
-						</p>
-						<Cluster space="var(--space-s)" justify="center">
-							<a href="/blog" class="button button-primary">Start Reading</a>
-							<a href="#subscribe" class="button button-secondary">Get Updates</a>
-						</Cluster>
-					</Stack>
+			<section class="hero">
+				<Center max="var(--measure-wide)" gutters="var(--space-m)">
+					<Switcher threshold="55rem" space="var(--space-xl)" class="hero-switcher">
+						<div class="hero-text-column">
+							<Stack space="var(--space-l)">
+								<Stack space="var(--space-m)">
+									<h1>Learn how to think, not what to think.</h1>
+									<p class="subhead">
+										The Self-Taught Scholar is a learning space for curious adults who want to think more clearly,
+										connect ideas across disciplines, and use modern tools — especially AI — without losing their agency.
+									</p>
+								</Stack>
+								<Cluster space="var(--space-s)" justify="flex-start">
+									<a href="/library" class="button button-primary">Start Exploring</a>
+									<a href="#subscribe" class="button button-secondary">Get Updates</a>
+								</Cluster>
+							</Stack>
+						</div>
+						<div class="hero-image-column">
+							<img src="/images/STS_hero.png" alt="Dimensional learning cube illustration" />
+						</div>
+					</Switcher>
 				</Center>
 			</section>
 
-			<!-- Four Schools -->
-			<section class="schools region">
+			<!-- Principles Section -->
+			<section class="principles region">
 				<Center max="var(--measure-wide)">
-					<Stack space="var(--space-l)">
-						<Stack space="var(--space-xs)" class="section-header">
-							<h2>The Four Schools</h2>
-							<p class="text-muted">Every skill worth learning draws from these interconnected domains.</p>
-						</Stack>
-						<Grid min="280px" space="var(--space-m)">
-							{schools.map((school) => (
-								<article class="school-card">
-									<Stack space="var(--space-s)">
-										<span class="school-emoji">{school.emoji}</span>
-										<h3>{school.name}</h3>
-										<p>{school.description}</p>
-									</Stack>
-								</article>
-							))}
-						</Grid>
-					</Stack>
-				</Center>
-			</section>
-
-			<!-- What's Available -->
-			<section class="available region">
-				<Center max="var(--measure-wide)">
-					<Stack space="var(--space-l)">
-						<Stack space="var(--space-xs)" class="section-header">
-							<h2>What's Available Now</h2>
-							<p class="text-muted">Currently building in public. Here's what's live:</p>
-						</Stack>
-						<Grid min="280px" space="var(--space-m)">
-							{sections.map((section) => (
-								<a href={section.href} class="section-card card">
-									<Stack space="var(--space-2xs)">
-										<Cluster space="var(--space-xs)" justify="space-between" align="baseline">
-											<h3>{section.name}</h3>
-											<span class:list={['status-badge', section.status === 'Live' && 'status-live']}>
-												{section.status}
-											</span>
-										</Cluster>
-										<p class="text-muted">{section.description}</p>
-									</Stack>
-								</a>
-							))}
-						</Grid>
-					</Stack>
-				</Center>
-			</section>
-
-			<!-- The Approach -->
-			<section class="approach region">
-				<Center max="var(--measure)">
-					<Stack space="var(--space-l)">
-						<h2 class="section-header">The Approach</h2>
-						<div class="prose flow">
-							<p>
-								Traditional education optimizes for credentials. We optimize for capability. The difference matters.
-							</p>
-							<p>
-								Our content is organized around two core concepts:
-							</p>
-							<ul>
-								<li>
-									<strong>Atoms</strong> are small, foundational concepts—the building blocks of understanding.
-									Each one is designed to be learned in minutes but remembered for years.
-								</li>
-								<li>
-									<strong>Scrolls</strong> are curated learning paths that combine atoms into coherent journeys.
-									They're courses, but structured around mastery rather than completion.
-								</li>
-							</ul>
-							<p>
-								We believe in talent stacks over narrow expertise. A programmer who understands psychology
-								builds better products. A writer who understands systems thinking creates clearer arguments.
-								The edges between disciplines are where the interesting work happens.
-							</p>
-							<p>
-								The goal isn't to know everything—it's to build a foundation of transferable principles
-								that compound over time. Learn how to learn, and the rest follows.
-							</p>
+					<Stack space="var(--space-xl)">
+						<h2 class="section-header">How we think about learning</h2>
+						<div class="principles-list">
+							<Stack space="var(--space-l)">
+								{principles.map((principle, index) => (
+									<article class="principle">
+										<Sidebar sideWidth="2rem" contentMin="70%" space="var(--space-m)" noStretch>
+											<span class="principle-number">{index + 1}</span>
+											<Stack space="var(--space-xs)">
+												<h3>{principle.title}</h3>
+												<p>{principle.description}</p>
+											</Stack>
+										</Sidebar>
+									</article>
+								))}
+							</Stack>
 						</div>
 					</Stack>
 				</Center>
 			</section>
 
-			<!-- Join the Journey -->
+			<!-- Dimensionality Section -->
+			<section class="dimensionality region">
+				<Center max="var(--measure-wide)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-s)" class="section-header">
+							<h2>What getting smarter actually looks like</h2>
+							<p class="section-intro">
+								Most education teaches in lines. Real understanding lives in relationships.
+							</p>
+						</Stack>
+
+						<div class="dimension-table-wrapper">
+							<table class="dimension-table">
+								<thead>
+									<tr>
+										<th></th>
+										<th>What it means</th>
+										<th>What it looks like</th>
+									</tr>
+								</thead>
+								<tbody>
+									{dimensions.map((dim) => (
+										<tr>
+											<td class="dimension-level"><strong>{dim.level}</strong></td>
+											<td>{dim.meaning}</td>
+											<td class="dimension-example">{dim.example}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+
+						<p class="dimension-note">
+							Growth isn't a staircase. It's a spiral. You return to the same ideas again and again —
+							each time with richer connections and finer resolution.
+						</p>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- Structure Section -->
+			<section class="structure region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-xl)">
+						<Stack space="var(--space-s)" class="section-header">
+							<h2>How the site is organized</h2>
+							<p class="section-intro">
+								Everything here is built around four Schools — not departments, but ways of seeing.
+							</p>
+						</Stack>
+
+						<Grid min="20rem" space="var(--space-l)">
+							{schools.map((school) => (
+								<a href={`/library/${school.slug}/`} class="school-card-link">
+									<article class="school-card">
+										<Stack space="var(--space-2xs)">
+											<span class="school-emoji">{school.emoji}</span>
+											<h3>{school.name}</h3>
+											<p class="school-tagline">{school.tagline}</p>
+											<p class="school-domains">{school.domains}</p>
+										</Stack>
+									</article>
+								</a>
+							))}
+						</Grid>
+
+						<div class="structure-explanation">
+							<Stack space="var(--space-m)">
+								<p>
+									Ideas don't stay in one school. A concept like <em>Persuasion</em> starts in Rhetoric (Story & Expression),
+									deepens through Psychology and Ethics (Society & Self), and finds its ultimate form when you actually
+									build something persuasive (Making). We call these cross-cutting ideas <strong>Scrolls</strong> —
+									conceptual threads that weave through multiple schools and domains.
+								</p>
+								<p>
+									When scrolls come together into a guided learning path, that's a <strong>Class</strong> —
+									a journey through several big ideas, drawn from multiple schools, that ends with something you've made.
+								</p>
+							</Stack>
+						</div>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- CTA Section -->
+			<section class="cta region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-l)" class="cta-content">
+						<Stack space="var(--space-s)">
+							<h2>You don't need a degree. You need a direction.</h2>
+						</Stack>
+						<Cluster space="var(--space-s)" justify="center">
+							<a href="/library" class="button button-primary">Start Exploring</a>
+							<a href="/essays" class="button button-secondary">Read Essays</a>
+						</Cluster>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- Subscribe Section -->
 			<section id="subscribe" class="join region">
 				<Center max="var(--measure)">
 					<Stack space="var(--space-l)">
@@ -208,29 +263,33 @@ const sections = [
 <style>
 	/* Hero */
 	.hero {
-		padding-block: var(--space-2xl);
-		background: linear-gradient(to bottom, var(--color-bg-subtle), var(--color-bg));
+		background: linear-gradient(135deg, #dfe6ff 0%, #d4ddff 40%, #e4d9ff 100%);
+		padding-block: var(--space-xl);
 	}
 
-	.hero-text {
-		text-align: center;
+	.hero-switcher {
+		align-items: center;
+	}
+
+	.hero-text-column {
+		max-inline-size: var(--measure);
 	}
 
 	.hero h1 {
-		font-size: var(--step-5);
+		font-size: var(--step-4);
+		line-height: 1.1;
+		color: var(--color-dark);
 	}
 
-	.tagline {
-		font-size: var(--step-1);
-		color: var(--color-text-muted);
-	}
-
-	.intro {
+	.subhead {
 		font-size: var(--step-0);
-		max-inline-size: 55ch;
-		margin-inline: auto;
-		text-align: center;
 		color: var(--color-text);
+		line-height: 1.6;
+	}
+
+	.hero-image-column img {
+		max-inline-size: 100%;
+		block-size: auto;
 	}
 
 	/* Buttons */
@@ -271,15 +330,74 @@ const sections = [
 		text-align: center;
 	}
 
-	/* Schools */
-	.schools {
+	.section-header h2 {
+		font-size: var(--step-2);
+	}
+
+	.section-intro {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		max-inline-size: 55ch;
+		margin-inline: auto;
+	}
+
+	/* Principles — white background */
+	.principles {
 		background-color: var(--color-bg);
+	}
+
+	.principle {
+		padding-block-end: var(--space-l);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.principle:last-child {
+		border-block-end: none;
+		padding-block-end: 0;
+	}
+
+	.principle-number {
+		font-size: var(--step-1);
+		font-weight: 700;
+		color: var(--color-text-muted);
+		opacity: 0.5;
+	}
+
+	.principle h3 {
+		font-size: var(--step-1);
+		font-weight: 600;
+		line-height: 1.3;
+	}
+
+	.principle p {
+		font-size: var(--step-0);
+		color: var(--color-text);
+		line-height: 1.6;
+	}
+
+	/* Structure / Schools — white background */
+	.structure {
+		background-color: var(--color-bg);
+	}
+
+	.school-card-link {
+		text-decoration: none;
+		color: inherit;
+		display: block;
 	}
 
 	.school-card {
 		padding: var(--space-m);
-		background-color: var(--color-bg-subtle);
+		background-color: var(--color-bg);
 		border-radius: var(--space-xs);
+		border: 1px solid var(--color-border);
+		transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+	}
+
+	.school-card-link:hover .school-card {
+		border-color: var(--color-accent);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		transform: translateY(-2px);
 	}
 
 	.school-emoji {
@@ -287,64 +405,104 @@ const sections = [
 	}
 
 	.school-card h3 {
-		font-size: var(--step-1);
+		font-size: var(--step-0);
 		font-weight: 600;
 	}
 
-	.school-card p {
+	.school-tagline {
 		font-size: var(--step--1);
+		color: var(--color-text);
+		font-style: italic;
+	}
+
+	.school-domains {
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+	}
+
+	.structure-explanation {
+		max-inline-size: var(--measure);
+		margin-inline: auto;
+		padding-block-start: var(--space-m);
+	}
+
+	.structure-explanation p {
+		font-size: var(--step-0);
 		color: var(--color-text);
 		line-height: 1.6;
 	}
 
-	/* Available sections */
-	.available {
-		background-color: var(--color-bg-subtle);
-	}
-
-	.section-card {
-		text-decoration: none;
-		color: inherit;
-		background-color: var(--color-bg);
-	}
-
-	.section-card h3 {
-		font-size: var(--step-0);
-		font-weight: 600;
-		transition: color 0.15s ease;
-	}
-
-	.section-card:hover h3 {
+	.structure-explanation strong {
 		color: var(--color-accent);
 	}
 
-	.section-card p {
-		font-size: var(--step--1);
+	/* Dimensionality — light gray background */
+	.dimensionality {
+		background-color: var(--color-bg-subtle);
 	}
 
-	.status-badge {
-		font-size: var(--step--2);
-		padding-block: var(--space-3xs);
-		padding-inline: var(--space-2xs);
-		background-color: var(--color-bg-subtle);
+	.dimension-table-wrapper {
+		overflow-x: auto;
+	}
+
+	.dimension-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: var(--step-0);
+	}
+
+	.dimension-table th,
+	.dimension-table td {
+		padding: var(--space-s);
+		text-align: left;
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.dimension-table th {
+		font-weight: 600;
 		color: var(--color-text-muted);
-		border-radius: var(--space-3xs);
+		font-size: var(--step--2);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.dimension-level {
 		white-space: nowrap;
 	}
 
-	.status-badge.status-live {
-		background-color: color-mix(in srgb, #22c55e 15%, transparent);
-		color: #15803d;
+	.dimension-example {
+		color: var(--color-text-muted);
+		font-style: italic;
 	}
 
-	/* Approach */
-	.approach {
-		background-color: var(--color-bg);
+	.dimension-note {
+		text-align: center;
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		max-inline-size: var(--measure);
+		margin-inline: auto;
+		font-style: italic;
+	}
+
+	/* CTA — hero gradient to bookend the page */
+	.cta {
+		background: linear-gradient(135deg, #dfe6ff 0%, #d4ddff 40%, #e4d9ff 100%);
+		padding-block: var(--space-2xl);
+	}
+
+	.cta-content {
+		text-align: center;
+	}
+
+	.cta h2 {
+		font-size: var(--step-2);
+		max-inline-size: 20ch;
+		margin-inline: auto;
 	}
 
 	/* Join */
 	.join {
-		background-color: var(--color-bg-subtle);
+		background-color: var(--color-bg);
 	}
 
 	.join-note {

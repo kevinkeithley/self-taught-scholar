@@ -1,25 +1,52 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
-import Cluster from '../layouts/primitives/Cluster.astro';
-import Center from '../layouts/primitives/Center.astro';
 ---
 
 <header class="site-header">
-	<Center max="75rem" gutters="var(--space-m)">
+	<div class="header-container">
 		<nav class="nav-container">
 			<a href="/" class="site-title">{SITE_TITLE}</a>
-			<Cluster space="var(--space-xs)" justify="flex-end">
+
+			<button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+			</button>
+
+			<div class="nav-links">
 				<HeaderLink href="/">Home</HeaderLink>
 				<HeaderLink href="/blog">Blog</HeaderLink>
 				<HeaderLink href="/essays">Essays</HeaderLink>
 				<HeaderLink href="/courses">Courses</HeaderLink>
 				<HeaderLink href="/library">Library</HeaderLink>
 				<HeaderLink href="/about">About</HeaderLink>
-			</Cluster>
+			</div>
 		</nav>
-	</Center>
+	</div>
 </header>
+
+<script>
+	const hamburger = document.querySelector('.hamburger');
+	const navLinks = document.querySelector('.nav-links');
+	const header = document.querySelector('.site-header');
+
+	hamburger?.addEventListener('click', () => {
+		const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+		hamburger.setAttribute('aria-expanded', (!isExpanded).toString());
+		navLinks?.classList.toggle('nav-open');
+		header?.classList.toggle('menu-open');
+	});
+
+	// Close menu when clicking a link
+	navLinks?.querySelectorAll('a').forEach(link => {
+		link.addEventListener('click', () => {
+			hamburger?.setAttribute('aria-expanded', 'false');
+			navLinks?.classList.remove('nav-open');
+			header?.classList.remove('menu-open');
+		});
+	});
+</script>
 
 <style>
 	.site-header {
@@ -30,12 +57,16 @@ import Center from '../layouts/primitives/Center.astro';
 		z-index: 100;
 	}
 
+	.header-container {
+		max-width: 75rem;
+		margin-inline: auto;
+		padding-inline: var(--space-m);
+	}
+
 	.nav-container {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-m);
 		padding-block: var(--space-s);
 	}
 
@@ -51,11 +82,89 @@ import Center from '../layouts/primitives/Center.astro';
 		color: var(--color-accent);
 	}
 
-	/* On very small screens, stack the nav */
-	@media (max-width: 30rem) {
-		.nav-container {
+	/* Nav links - desktop */
+	.nav-links {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xs);
+	}
+
+	/* Hamburger - hidden on desktop */
+	.hamburger {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		width: 32px;
+		height: 32px;
+		padding: 4px;
+		background: none;
+		border: none;
+		cursor: pointer;
+	}
+
+	.hamburger-line {
+		display: block;
+		width: 100%;
+		height: 2px;
+		background-color: var(--color-dark);
+		border-radius: 2px;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	/* Hamburger animation when open */
+	.hamburger[aria-expanded="true"] .hamburger-line:nth-child(1) {
+		transform: translateY(7px) rotate(45deg);
+	}
+
+	.hamburger[aria-expanded="true"] .hamburger-line:nth-child(2) {
+		opacity: 0;
+	}
+
+	.hamburger[aria-expanded="true"] .hamburger-line:nth-child(3) {
+		transform: translateY(-7px) rotate(-45deg);
+	}
+
+	/* Mobile styles */
+	@media (max-width: 48rem) {
+		.hamburger {
+			display: flex;
+		}
+
+		.nav-links {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
 			flex-direction: column;
-			align-items: flex-start;
+			align-items: stretch;
+			gap: 0;
+			background-color: var(--color-bg);
+			border-block-end: 1px solid var(--color-border);
+			padding: var(--space-s) var(--space-m);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		}
+
+		.nav-links.nav-open {
+			display: flex;
+		}
+
+		.nav-links :global(a) {
+			padding: var(--space-xs) 0;
+			border-block-end: 1px solid var(--color-border);
+		}
+
+		.nav-links :global(a:last-child) {
+			border-block-end: none;
+		}
+
+		.site-header {
+			position: relative;
+		}
+
+		.site-header.menu-open {
+			position: sticky;
 		}
 	}
 </style>

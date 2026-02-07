@@ -1,0 +1,46 @@
+---
+/**
+ * Switcher - Switch between horizontal and vertical layout
+ * Automatically switches based on available space, not breakpoints
+ * @see https://every-layout.dev/layouts/switcher/
+ */
+interface Props {
+	threshold?: string;
+	space?: string;
+	limit?: number;
+	class?: string;
+}
+
+const {
+	threshold = '40rem',
+	space = 'var(--space-l)',
+	limit = 4,
+	class: className,
+} = Astro.props;
+---
+
+<div
+	class:list={['switcher', className]}
+	style={`--threshold: ${threshold}; --space: ${space}; --limit: ${limit}`}
+>
+	<slot />
+</div>
+
+<style>
+	.switcher {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space, var(--space-l));
+	}
+
+	.switcher > :global(*) {
+		flex-grow: 1;
+		flex-basis: calc((var(--threshold, 40rem) - 100%) * 999);
+	}
+
+	/* Limit: if more than --limit children, force vertical */
+	.switcher > :global(:nth-last-child(n + calc(var(--limit) + 1))),
+	.switcher > :global(:nth-last-child(n + calc(var(--limit) + 1)) ~ *) {
+		flex-basis: 100%;
+	}
+</style>
