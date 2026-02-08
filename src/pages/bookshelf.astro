@@ -1,0 +1,596 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Center from '../layouts/primitives/Center.astro';
+import Stack from '../layouts/primitives/Stack.astro';
+import Sidebar from '../layouts/primitives/Sidebar.astro';
+import { SITE_TITLE } from '../consts';
+
+// Extract ISBN from Amazon URL
+function getIsbn(url: string): string {
+	const match = url.match(/\/dp\/([A-Z0-9]+)\?/);
+	return match ? match[1] : '';
+}
+
+// Get Open Library cover URL
+function getCoverUrl(isbn: string): string {
+	return `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
+}
+
+const storyBooks = [
+	{
+		title: 'The Hero with a Thousand Faces',
+		author: 'Joseph Campbell',
+		url: 'https://www.amazon.com/dp/1577315936?tag=selftaughtsch-20',
+		description: "The book that revealed the monomyth — the deep structure beneath every hero's journey, from Odysseus to Luke Skywalker. Campbell didn't invent this pattern; he uncovered it across every culture and era. Once you see it, you recognize it everywhere: in stories, in life transitions, in the way we make meaning out of struggle.",
+	},
+	{
+		title: 'The Anatomy of Story',
+		author: 'John Truby',
+		url: 'https://www.amazon.com/dp/0865479933?tag=selftaughtsch-20',
+		description: 'Where Campbell maps the universal myth, Truby maps the mechanics. Twenty-two steps, not as formula, but as organic structure — the way a story grows from a single moral problem into a complete world. The most rigorous book on story architecture available.',
+	},
+	{
+		title: 'Story',
+		author: 'Robert McKee',
+		url: 'https://www.amazon.com/dp/0060391685?tag=selftaughtsch-20',
+		description: "McKee's masterwork on the principles behind great storytelling. Not a template — a way of thinking about how meaning is created through structure, character, and scene. Dense, demanding, and the book working screenwriters actually reference.",
+	},
+	{
+		title: 'Save the Cat',
+		author: 'Blake Snyder',
+		url: 'https://www.amazon.com/dp/1932907009?tag=selftaughtsch-20',
+		description: "The most practical book on story structure ever written. Snyder breaks screenwriting into a repeatable framework — not to make stories formulaic, but to reveal the architecture that makes audiences *feel* something. Useful far beyond Hollywood.",
+	},
+	{
+		title: 'The Visual Story',
+		author: 'Bruce Block',
+		url: 'https://www.amazon.com/dp/113801415X?tag=selftaughtsch-20',
+		description: 'Every frame tells a story through visual structure — contrast, affinity, space, line, shape, color, movement, rhythm. Block teaches you to see the invisible grammar of images. Essential for anyone who works with visual media, and quietly useful for anyone who thinks in spatial terms.',
+	},
+	{
+		title: 'Resonate',
+		author: 'Nancy Duarte',
+		url: 'https://www.amazon.com/dp/0470632011?tag=selftaughtsch-20',
+		description: "Duarte maps story structure onto presentations and proves that the best communicators aren't informing — they're transforming. The audience starts in one place and ends in another, and the speaker's job is to build the bridge. A framework book disguised as a presentation book.",
+	},
+	{
+		title: 'The Elements of Eloquence',
+		author: 'Mark Forsyth',
+		url: 'https://www.amazon.com/dp/042527618X?tag=selftaughtsch-20',
+		description: "Most people think great writing is about having something to say. Forsyth makes the case that it's about *how* you say it — and that rhetoric has a toolbox as precise as mathematics. This is the book that makes you realize Shakespeare wasn't a genius who transcended technique. He was a genius *because* of technique.",
+	},
+	{
+		title: 'Writing to Learn',
+		author: 'William Zinsser',
+		url: 'https://www.amazon.com/dp/0062720406?tag=selftaughtsch-20',
+		description: "Zinsser's argument is simple and profound: writing isn't the output of thinking — it *is* thinking. If you can't write clearly about something, you don't understand it yet. This book changed how we think about learning at STS.",
+	},
+	{
+		title: 'On Writing Well',
+		author: 'William Zinsser',
+		url: 'https://www.amazon.com/dp/0060891548?tag=selftaughtsch-20',
+		description: "The companion to *Writing to Learn* and one of the best books on nonfiction craft in print. Zinsser strips writing down to its essentials: clarity, simplicity, brevity, and humanity. If *Writing to Learn* is about why you should write, this is about how to do it well.",
+	},
+	{
+		title: 'Brave New World',
+		author: 'Aldous Huxley',
+		url: 'https://www.amazon.com/dp/0060850523?tag=selftaughtsch-20',
+		description: "Orwell warned us about the things we fear. Huxley warned us about the things we love. His dystopia isn't built on oppression — it's built on pleasure, distraction, and the voluntary surrender of depth. More relevant now than when it was written.",
+	},
+	{
+		title: 'Island',
+		author: 'Aldous Huxley',
+		url: 'https://www.amazon.com/dp/0061561797?tag=selftaughtsch-20',
+		description: "The mirror image of *Brave New World* — Huxley's attempt to imagine a society that actually works. Less famous, arguably more important. Where *Brave New World* diagnoses, *Island* prescribes.",
+	},
+	{
+		title: 'The Theater of War',
+		author: 'Bryan Doerries',
+		url: 'https://www.amazon.com/dp/0307949729?tag=selftaughtsch-20',
+		description: 'Doerries performs ancient Greek tragedies for military veterans, prison inmates, and first responders — and it works. Sophocles wrote about the psychological wounds of war 2,500 years ago, and the language still lands. A book about what happens when story stops being entertainment and starts being medicine.',
+	},
+];
+
+const patternBooks = [
+	{
+		title: 'Gödel, Escher, Bach',
+		author: 'Douglas Hofstadter',
+		url: 'https://www.amazon.com/dp/0465026567?tag=selftaughtsch-20',
+		description: 'The most ambitious book about thinking ever written. Hofstadter weaves mathematics, art, and music into a single argument about self-reference, consciousness, and the nature of meaning. Dense, playful, and permanently rewiring. If STS had a patron saint, this book would be it.',
+	},
+	{
+		title: 'The Computational Beauty of Nature',
+		author: 'Gary William Flake',
+		url: 'https://www.amazon.com/dp/0262561271?tag=selftaughtsch-20',
+		description: 'Fractals, chaos, complex systems, cellular automata, genetic algorithms — Flake reveals the computational structures hiding inside natural phenomena. The book makes you see pattern and emergence everywhere, from coastlines to ecosystems. Visual, rigorous, and deeply satisfying.',
+	},
+	{
+		title: 'Fooled by Randomness',
+		author: 'Nassim Taleb',
+		url: 'https://www.amazon.com/dp/0812975219?tag=selftaughtsch-20',
+		description: "The book that started the Incerto series. Taleb's core insight: we are profoundly bad at distinguishing skill from luck, signal from noise. Once you see it, you can't unsee it — in markets, careers, medicine, and your own life.",
+	},
+	{
+		title: 'The Black Swan',
+		author: 'Nassim Taleb',
+		url: 'https://www.amazon.com/dp/081297381X?tag=selftaughtsch-20',
+		description: "The sequel in spirit to *Fooled by Randomness*, but bigger in scope. Taleb argues that the events that matter most are the ones we can't predict — and that our entire intellectual apparatus is built to ignore them. A book about the limits of knowledge itself.",
+	},
+	{
+		title: 'Antifragile',
+		author: 'Nassim Taleb',
+		url: 'https://www.amazon.com/dp/0812979680?tag=selftaughtsch-20',
+		description: "Taleb's masterwork. Beyond resilience, beyond robustness — some things actually *benefit* from disorder. This book gives you a framework for thinking about systems, risk, and strength that applies to everything from health to economics to how you structure your life.",
+	},
+	{
+		title: 'Skin in the Game',
+		author: 'Nassim Taleb',
+		url: 'https://www.amazon.com/dp/042528462X?tag=selftaughtsch-20',
+		description: "The ethical capstone of the Incerto. Taleb's argument: you cannot separate knowledge from consequences. If you don't bear the downside of your decisions, your knowledge is suspect. A book about accountability disguised as a book about risk.",
+	},
+	{
+		title: 'Moneyball',
+		author: 'Michael Lewis',
+		url: 'https://www.amazon.com/dp/0393324818?tag=selftaughtsch-20',
+		description: "On the surface, a book about baseball. Underneath, a book about what happens when someone takes pattern recognition seriously in a domain ruled by intuition and tradition. Lewis shows how the Oakland A's found value everyone else was too biased to see.",
+	},
+	{
+		title: 'The Big Short',
+		author: 'Michael Lewis',
+		url: 'https://www.amazon.com/dp/0393338827?tag=selftaughtsch-20',
+		description: 'The story of the 2008 financial crisis told through the people who saw it coming. Lewis is at his best here — making complex financial instruments legible while showing how systems collapse when nobody has skin in the game.',
+	},
+	{
+		title: "Liar's Poker",
+		author: 'Michael Lewis',
+		url: 'https://www.amazon.com/dp/039333869X?tag=selftaughtsch-20',
+		description: "Lewis's first book, written from inside the bond trading world of the 1980s. Raw, funny, and a masterclass in how institutions shape behavior. Pairs well with Taleb — same world, different vantage point.",
+	},
+	{
+		title: 'Good Calories, Bad Calories',
+		author: 'Gary Taubes',
+		url: 'https://www.amazon.com/dp/1400033462?tag=selftaughtsch-20',
+		description: 'Not a diet book. A 600-page investigation into how nutritional science went wrong — how institutions, incentives, and bad statistics created a consensus that may have caused more harm than good. A case study in what happens when a field gets stuck at "lines" and refuses to think in systems.',
+	},
+	{
+		title: "Poor Charlie's Almanack",
+		author: 'Charlie Munger',
+		url: 'https://www.amazon.com/dp/1578645018?tag=selftaughtsch-20',
+		description: "Munger's core idea — mental models from multiple disciplines — is basically the STS thesis stated by a billionaire. This book is a collection of his talks, and every one of them demonstrates what it looks like to think across domains instead of within them.",
+	},
+];
+
+const societyBooks = [
+	{
+		title: "Man's Search for Meaning",
+		author: 'Viktor Frankl',
+		url: 'https://www.amazon.com/dp/0807014273?tag=selftaughtsch-20',
+		description: "Frankl survived the Holocaust and came out with a single insight: meaning is not something you find, it's something you *choose*. The first half is memoir. The second half is framework. Both are essential.",
+	},
+	{
+		title: 'Ordinary Men',
+		author: 'Christopher Browning',
+		url: 'https://www.amazon.com/dp/0062303023?tag=selftaughtsch-20',
+		description: 'The most disturbing book on this list, and one of the most important. Browning studies a battalion of normal German men who became mass murderers — not because they were evil, but because the system around them made it easy. A book about what humans are capable of when accountability disappears.',
+	},
+	{
+		title: 'The Art of Loving',
+		author: 'Erich Fromm',
+		url: 'https://www.amazon.com/dp/0061129739?tag=selftaughtsch-20',
+		description: "Fromm's argument: love isn't a feeling you fall into, it's a practice you develop. He treats love with the same seriousness a craftsman treats their work — as something requiring knowledge, effort, and discipline. Radical when published, still radical now.",
+	},
+	{
+		title: 'Escape from Freedom',
+		author: 'Erich Fromm',
+		url: 'https://www.amazon.com/dp/0805031499?tag=selftaughtsch-20',
+		description: "Why do people flee from the very freedom they claim to want? Fromm wrote this in 1941 watching fascism consume Europe, but the psychology he describes — the anxiety of autonomy, the comfort of submission — is timeless. The natural next step after *The Art of Loving*.",
+	},
+	{
+		title: 'Man for Himself',
+		author: 'Erich Fromm',
+		url: 'https://www.amazon.com/dp/0805014039?tag=selftaughtsch-20',
+		description: "Fromm's ethics book. He argues that selfishness and self-love are opposites, not synonyms — and that genuine ethical behavior flows from understanding yourself, not from obedience to rules.",
+	},
+	{
+		title: 'The Sane Society',
+		author: 'Erich Fromm',
+		url: 'https://www.amazon.com/dp/0805014020?tag=selftaughtsch-20',
+		description: 'What if the society itself is sick, and "well-adjusted" people are the most afflicted? Fromm applies psychoanalytic thinking to entire cultures. The culmination of the arc that starts with *The Art of Loving* — from self, to freedom, to ethics, to civilization.',
+	},
+	{
+		title: 'Flow',
+		author: 'Mihaly Csikszentmihalyi',
+		url: 'https://www.amazon.com/dp/0061339202?tag=selftaughtsch-20',
+		description: "The psychology of optimal experience. Csikszentmihalyi studied what makes people genuinely absorbed in what they're doing and found a consistent pattern: clear goals, immediate feedback, and challenge matched to skill. The science behind why learning feels good when it's done right.",
+	},
+	{
+		title: 'The Power of Habit',
+		author: 'Charles Duhigg',
+		url: 'https://www.amazon.com/dp/081298160X?tag=selftaughtsch-20',
+		description: "Habits aren't just things you do — they're the infrastructure of your life. Duhigg breaks down the cue-routine-reward loop and shows how understanding it gives you leverage over behavior at every scale, from personal to organizational.",
+	},
+	{
+		title: 'The Culture Code',
+		author: 'Daniel Coyle',
+		url: 'https://www.amazon.com/dp/0804176981?tag=selftaughtsch-20',
+		description: "What makes some groups wildly more effective than others? Coyle studied the best teams in the world and found that culture isn't about perks or slogans — it's about safety, vulnerability, and shared purpose. A systems-level look at human collaboration.",
+	},
+	{
+		title: 'The Tao of Pooh',
+		author: 'Benjamin Hoff',
+		url: 'https://www.amazon.com/dp/0140067477?tag=selftaughtsch-20',
+		description: "Eastern philosophy explained through Winnie the Pooh. Sounds absurd. Works beautifully. Hoff uses the simplest possible characters to illustrate ideas most philosophy books make impenetrable. A reminder that clarity and depth aren't opposites.",
+	},
+	{
+		title: 'The Magic of Thinking Big',
+		author: 'David Schwartz',
+		url: 'https://www.amazon.com/dp/0671646788?tag=selftaughtsch-20',
+		description: "The title sounds like a self-help cliché. The content is sharper than you'd expect. Schwartz's core insight: most limitations are self-imposed, and the mechanics of thinking bigger are learnable. Dated in style, not in substance.",
+	},
+	{
+		title: 'With Winning in Mind',
+		author: 'Lanny Bassham',
+		url: 'https://www.amazon.com/dp/1934324264?tag=selftaughtsch-20',
+		description: "Written by an Olympic gold medalist in shooting, this is the most precise book on mental performance you'll find. Bassham breaks the mental game into a system — self-image, conscious thought, subconscious process — with a clarity that applies far beyond sports.",
+	},
+	{
+		title: 'Start with No',
+		author: 'Jim Camp',
+		url: 'https://www.amazon.com/dp/0609608002?tag=selftaughtsch-20',
+		description: "The anti-*Getting to Yes*. Camp argues that neediness kills negotiation, and that giving the other side permission to say no is the most powerful move you can make. Counterintuitive, practical, and deeply respectful of human psychology.",
+	},
+	{
+		title: 'Never Split the Difference',
+		author: 'Chris Voss',
+		url: 'https://www.amazon.com/dp/0062407805?tag=selftaughtsch-20',
+		description: "Negotiation tactics from a former FBI hostage negotiator. Voss's methods — tactical empathy, mirroring, calibrated questions — work because they're built on how people actually think under pressure, not how economists wish they would.",
+	},
+	{
+		title: 'Gut and Psychology Syndrome',
+		author: 'Natasha Campbell-McBride',
+		url: 'https://www.amazon.com/dp/0954852028?tag=selftaughtsch-20',
+		description: 'A controversial book that connects gut health to neurological and psychological function. Whether you agree with every claim or not, the core thesis — that the gut-brain connection matters more than mainstream medicine has acknowledged — has only gained support since publication.',
+	},
+];
+
+const makingBooks = [
+	{
+		title: 'The War of Art',
+		author: 'Steven Pressfield',
+		url: 'https://www.amazon.com/dp/1936891026?tag=selftaughtsch-20',
+		description: "The definitive book on Resistance — the invisible force that stops you from doing the work you know you should be doing. Pressfield names it, dissects it, and gives you no excuse. If you've ever struggled to start, this is the book.",
+	},
+	{
+		title: 'Drawing on the Right Side of the Brain',
+		author: 'Betty Edwards',
+		url: 'https://www.amazon.com/dp/1585429201?tag=selftaughtsch-20',
+		description: "Edwards' core insight: drawing is not a talent — it's a learnable shift in perception. When you stop drawing what you *think* you see and start drawing what's actually there, everything changes. A book about seeing clearly disguised as a book about sketching.",
+	},
+	{
+		title: 'Creativity, Inc.',
+		author: 'Ed Catmull',
+		url: 'https://www.amazon.com/dp/0812993012?tag=selftaughtsch-20',
+		description: "The story of Pixar told as a management book — but really a book about how to build environments where creative work can actually happen. Catmull is honest about failure in a way most business books never are.",
+	},
+	{
+		title: 'Deep Work',
+		author: 'Cal Newport',
+		url: 'https://www.amazon.com/dp/1455586692?tag=selftaughtsch-20',
+		description: "Newport's argument: the ability to focus without distraction is becoming both increasingly rare and increasingly valuable. This book gives you the framework and the tactics to protect your attention and do work that matters.",
+	},
+	{
+		title: 'Ignore Everybody',
+		author: 'Hugh MacLeod',
+		url: 'https://www.amazon.com/dp/159184259X?tag=selftaughtsch-20',
+		description: "Short, blunt, and drawn on the backs of business cards. MacLeod's advice to anyone making something: your idea doesn't need anyone's permission, and the moment you start seeking approval is the moment you lose the thread.",
+	},
+	{
+		title: 'Zero to One',
+		author: 'Peter Thiel',
+		url: 'https://www.amazon.com/dp/0804139296?tag=selftaughtsch-20',
+		description: "Thiel's contrarian framework for building things that matter: going from nothing to something (0 to 1) is fundamentally different from copying what works (1 to n). A book about originality disguised as a book about startups.",
+	},
+	{
+		title: 'The Business of Expertise',
+		author: 'David C. Baker',
+		url: 'https://www.amazon.com/dp/1605440604?tag=selftaughtsch-20',
+		description: "If you're building a practice around what you know, this book is essential. Baker explains how expertise is positioned, sold, and protected — and why most experts undervalue what they've built. Directly relevant to anyone creating an educational platform.",
+	},
+	{
+		title: "The Non-Designer's Design Book",
+		author: 'Robin Williams',
+		url: 'https://www.amazon.com/dp/0133966151?tag=selftaughtsch-20',
+		description: "Four principles: contrast, repetition, alignment, proximity. That's it. Williams proves that design literacy doesn't require design school — just the ability to see what's already in front of you. The most practical design book ever written.",
+	},
+	{
+		title: "Ruhlman's Twenty",
+		author: 'Michael Ruhlman',
+		url: 'https://www.amazon.com/dp/0811876438?tag=selftaughtsch-20',
+		description: "Twenty techniques that unlock all of cooking. Ruhlman's thesis: recipes are surface-level instructions, but *techniques* are transferable principles. Sound familiar? This is STS thinking applied to the kitchen.",
+	},
+	{
+		title: 'Salt, Fat, Acid, Heat',
+		author: 'Samin Nosrat',
+		url: 'https://www.amazon.com/dp/1476753830?tag=selftaughtsch-20',
+		description: 'Nosrat does for cooking what STS aims to do for learning: she teaches the underlying *system* instead of the surface-level steps. Master four elements and you can cook anything. A book about frameworks disguised as a cookbook.',
+	},
+	{
+		title: 'Practical Shooting: Beyond Fundamentals',
+		author: 'Brian Enos',
+		url: 'https://www.amazon.com/dp/0962692506?tag=selftaughtsch-20',
+		description: 'An unexpected entry, but a profound one. Enos writes about competitive shooting the way a Zen master writes about archery. The real subject is the relationship between conscious intention, subconscious execution, and the state of mind where performance becomes effortless. Pairs beautifully with *Flow* and *With Winning in Mind*.',
+	},
+];
+
+const schools = [
+	{
+		name: 'Story & Expression',
+		tagline: 'Meaning through narrative and symbol',
+		books: storyBooks,
+	},
+	{
+		name: 'Pattern & Play',
+		tagline: 'Meaning through structure and system',
+		books: patternBooks,
+	},
+	{
+		name: 'Society & Self',
+		tagline: 'Meaning through psychology and ethics',
+		books: societyBooks,
+	},
+	{
+		name: 'Making',
+		tagline: 'Meaning through creation and practice',
+		books: makingBooks,
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Bookshelf | ${SITE_TITLE}`}
+			description="Curated books across four Schools of knowledge: Story & Expression, Pattern & Play, Society & Self, and Making. Each one has shaped how we think."
+		/>
+	</head>
+	<body>
+		<Header />
+
+		<main>
+			<!-- Header Section -->
+			<section class="page-header region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-l)">
+						<Stack space="var(--space-s)">
+							<h1>Bookshelf</h1>
+							<p class="intro">
+								Fifty books that shaped how we think. Organized by School, linked for easy access.
+							</p>
+						</Stack>
+						<aside class="disclaimer">
+							<p>
+								<em>All links on this page are affiliate links. If you buy a book through one of these links,
+								we earn a small commission at no extra cost to you. We aim to keep our library of ideas free —
+								this is one of the ways we make that possible. We only recommend books we've actually read
+								and believe are worth your time.</em>
+							</p>
+						</aside>
+					</Stack>
+				</Center>
+			</section>
+
+			<!-- Book Sections -->
+			{schools.map((school, index) => (
+				<section class:list={['book-section', 'region', index % 2 === 1 ? 'bg-subtle' : '']}>
+					<Center max="var(--measure)">
+						<Stack space="var(--space-xl)">
+							<header class="school-header">
+								<Stack space="var(--space-2xs)">
+									<h2>{school.name}</h2>
+									<p class="school-tagline">{school.tagline}</p>
+								</Stack>
+							</header>
+							<Stack space="var(--space-l)">
+								{school.books.map((book) => {
+									const isbn = getIsbn(book.url);
+									const coverUrl = getCoverUrl(isbn);
+									return (
+										<article class="book">
+											<Sidebar side="left" sideWidth="5rem" contentMin="65%" space="var(--space-m)" noStretch>
+												<div class="book-cover">
+													<img
+														src={coverUrl}
+														alt={`Cover of ${book.title}`}
+														loading="lazy"
+														onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+													/>
+													<div class="cover-fallback" aria-hidden="true">
+														<span>{book.title.slice(0, 1)}</span>
+													</div>
+												</div>
+												<Stack space="var(--space-xs)">
+													<h3>
+														<a href={book.url} target="_blank" rel="noopener noreferrer">
+															{book.title}
+															<span class="link-arrow" aria-hidden="true">&rarr;</span>
+														</a>
+													</h3>
+													<p class="book-author">{book.author}</p>
+													<p class="book-description">{book.description}</p>
+												</Stack>
+											</Sidebar>
+										</article>
+									);
+								})}
+							</Stack>
+						</Stack>
+					</Center>
+				</section>
+			))}
+
+			<!-- Cross-School Note -->
+			<section class="cross-school region">
+				<Center max="var(--measure)">
+					<Stack space="var(--space-m)">
+						<h2>A Note on Categories</h2>
+						<div class="prose">
+							<p>
+								Many of these books belong in more than one School — and that's the point.
+								<em>Moneyball</em> is about pattern recognition (Pattern & Play) but also about
+								the courage to ignore consensus (Society & Self). <em>Resonate</em>
+								is about story structure (Story & Expression) but also about craft (Making).
+								<em>Gödel, Escher, Bach</em> touches all four Schools simultaneously.
+							</p>
+							<p>
+								The best books, like the best ideas, don't stay in one place. They're Scrolls.
+							</p>
+						</div>
+					</Stack>
+				</Center>
+			</section>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.page-header {
+		background: linear-gradient(135deg, #dfe6ff 0%, #d4ddff 40%, #e4d9ff 100%);
+	}
+
+	.intro {
+		font-size: var(--step-1);
+		color: var(--color-text-muted);
+		line-height: 1.5;
+	}
+
+	.disclaimer {
+		padding: var(--space-m);
+		background-color: rgba(255, 255, 255, 0.6);
+		border-radius: var(--space-xs);
+		font-size: var(--step--1);
+		color: var(--color-text-muted);
+	}
+
+	.book-section {
+		background-color: var(--color-bg);
+	}
+
+	.book-section.bg-subtle {
+		background-color: var(--color-bg-subtle);
+	}
+
+	.school-header {
+		padding-block-end: var(--space-m);
+		border-block-end: 2px solid var(--color-border);
+	}
+
+	.school-header h2 {
+		font-size: var(--step-2);
+	}
+
+	.school-tagline {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		font-style: italic;
+	}
+
+	.book {
+		padding-block-end: var(--space-l);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.book:last-child {
+		border-block-end: none;
+		padding-block-end: 0;
+	}
+
+	.book-cover {
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.book-cover img {
+		width: 5rem;
+		height: auto;
+		border-radius: var(--space-3xs);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	.cover-fallback {
+		display: none;
+		width: 5rem;
+		height: 7.5rem;
+		background: linear-gradient(135deg, var(--color-bg-subtle) 0%, var(--color-border) 100%);
+		border-radius: var(--space-3xs);
+		align-items: center;
+		justify-content: center;
+		font-size: var(--step-2);
+		font-weight: 700;
+		color: var(--color-text-muted);
+	}
+
+	.book h3 {
+		font-size: var(--step-1);
+		font-weight: 600;
+	}
+
+	.book h3 a {
+		color: var(--color-dark);
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+
+	.book h3 a:hover {
+		color: var(--color-accent);
+	}
+
+	.link-arrow {
+		display: inline-block;
+		margin-inline-start: var(--space-2xs);
+		font-size: var(--step-0);
+		opacity: 0.5;
+		transition: opacity 0.15s ease, transform 0.15s ease;
+	}
+
+	.book h3 a:hover .link-arrow {
+		opacity: 1;
+		transform: translateX(2px);
+	}
+
+	.book-author {
+		font-size: var(--step-0);
+		color: var(--color-text-muted);
+		font-weight: 500;
+	}
+
+	.book-description {
+		font-size: var(--step-0);
+		color: var(--color-text);
+		line-height: 1.6;
+	}
+
+	.cross-school {
+		background-color: var(--color-bg-subtle);
+	}
+
+	.cross-school h2 {
+		font-size: var(--step-1);
+		padding-block-end: var(--space-xs);
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.prose p {
+		font-size: var(--step-0);
+		line-height: 1.6;
+		color: var(--color-text);
+	}
+
+	.prose p + p {
+		margin-block-start: var(--space-m);
+	}
+</style>
